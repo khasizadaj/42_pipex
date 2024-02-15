@@ -6,7 +6,7 @@
 /*   By: jkhasiza <jkhasiza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/08 20:34:41 by jkhasiza          #+#    #+#             */
-/*   Updated: 2024/02/16 00:12:55 by jkhasiza         ###   ########.fr       */
+/*   Updated: 2024/02/16 00:16:27 by jkhasiza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,9 @@
 # include <fcntl.h>
 # include <errno.h>
 # include "../src/libft/libft.h"
+
+# define PATH_ERR 11
+# define PATH_ERR_MSG "PATH doesn't exist"
 
 # define MEMO_ERR 12
 # define MEMO_ERR_MSG "Memory allocation failed"

@@ -74,9 +74,13 @@ int	validate_input(int argc, char **argv, char **dirs)
 int	main(int argc, char **argv, char **envp)
 {
 	char	**dirs;
+	char	*path;
 	int		exit_code;
 
-	dirs = ft_split(extract_path(envp), ':');
+	path = extract_path(envp);
+	if (!path)
+		return (perror(PATH_ERR_MSG), PATH_ERR);
+	dirs = ft_split(path, ':');
 	if (!dirs)
 		return (perror(MEMO_ERR_MSG), 13);
 	exit_code = validate_input(argc, argv, dirs) != 0;
