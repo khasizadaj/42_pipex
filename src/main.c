@@ -6,32 +6,13 @@
 /*   By: jkhasiza <jkhasiza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/08 20:30:33 by jkhasiza          #+#    #+#             */
-/*   Updated: 2024/02/13 18:43:26 by jkhasiza         ###   ########.fr       */
+/*   Updated: 2024/02/16 00:11:32 by jkhasiza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/pipex.h"
-#include <stdio.h>
 
-int	ft_strncmp(const char *s1, const char *s2, size_t n)
-{
-	size_t	i;
-
-	if (n == 0)
-		return (0);
-	i = 0;
-	while (i < n && s1[i] != '\0' && s2[i] != '\0')
-	{
-		if ((unsigned char) s1[i] != (unsigned char) s2[i])
-			return ((unsigned char) s1[i] - (unsigned char) s2[i]);
-		i++;
-	}
-	if (i < n)
-		return ((unsigned char)s1[i] - (unsigned char)s2[i]);
-	return (0);
-}
-
-char	*get_path(char **envp)
+char	*extract_path(char **envp)
 {
 	int	i;
 
@@ -45,13 +26,60 @@ char	*get_path(char **envp)
 	return (NULL);
 }
 
+int	command_exists(char *command, char **dirs)
+{
+	char	*full_path;
+	char	*temp;
+	int		i;
+
+	i = 0;
+	while (dirs[i])
+	{
+		full_path = ft_strjoin(dirs[i], "/");
+		if (!full_path)
+			return (false);
+		temp = full_path;
+		full_path = ft_strjoin(temp, command);
+		free(temp);
+		if (!full_path)
+			return (false);
+		if (access(full_path, X_OK) == 0)
+			return (free(full_path), true);
+		free(full_path);
+		i++;
+	}
+	return (false);
+}
+
+int	validate_input(int argc, char **argv, char **dirs)
+{
+	int	i;
+
+	if (argc < 5)
+		return (ft_putstr_fd(USAGE_ERR_MSG, 2), USAGE_ERR);
+	if (access(argv[1], F_OK) != 0)
+		return (perror(ACCESS_ERR_MSG), ACCESS_ERR);
+	if (access(argv[argc - 1], F_OK) != 0)
+		return (perror(ACCESS_ERR_MSG), ACCESS_ERR);
+	i = 2;
+	while (i < argc - 1)
+	{
+		if (!command_exists(argv[i], dirs))
+			return (perror(ACCESS_ERR_MSG), COMMAND_ERR);
+		i++;
+	}
+	return (0);
+}
+
 int	main(int argc, char **argv, char **envp)
 {
-	printf("argc = %d\n", argc);
-	for (int i = 0; argv[i]; i++)
-	{
-		printf("argv[%d] = %s\n", i, argv[i]);
-	}
-	printf("PATH = %s\n", get_path(envp));
-	return (0);
+	char	**dirs;
+	int		exit_code;
+
+	dirs = ft_split(extract_path(envp), ':');
+	if (!dirs)
+		return (perror(MEMO_ERR_MSG), 13);
+	exit_code = validate_input(argc, argv, dirs) != 0;
+	if (exit_code != 0)
+		exit(exit_code);
 }
