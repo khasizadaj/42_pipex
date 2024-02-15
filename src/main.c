@@ -6,7 +6,7 @@
 /*   By: jkhasiza <jkhasiza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/08 20:30:33 by jkhasiza          #+#    #+#             */
-/*   Updated: 2024/02/16 00:11:32 by jkhasiza         ###   ########.fr       */
+/*   Updated: 2024/02/16 00:20:39 by jkhasiza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,9 +57,9 @@ int	validate_input(int argc, char **argv, char **dirs)
 
 	if (argc < 5)
 		return (ft_putstr_fd(USAGE_ERR_MSG, 2), USAGE_ERR);
-	if (access(argv[1], F_OK) != 0)
+	if (access(argv[1], R_OK) != 0)
 		return (perror(ACCESS_ERR_MSG), ACCESS_ERR);
-	if (access(argv[argc - 1], F_OK) != 0)
+	if (access(argv[argc - 1], W_OK) != 0)
 		return (perror(ACCESS_ERR_MSG), ACCESS_ERR);
 	i = 2;
 	while (i < argc - 1)
