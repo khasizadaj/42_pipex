@@ -39,11 +39,11 @@ ${NAME}: ${OBJS}
 	${CC} ${CFLAGS} -o ${NAME} ${OBJS} -L${LIBFT_DIR} -l${LIBFT}
 
 clean:
-	@make -C libft clean
+	@make -C ${LIBFT_DIR} clean
 	@rm -rf ${OBJS_DIR}
 
 fclean: clean
-	@make -C libft fclean
+	@make -C ${LIBFT_DIR} fclean
 	@rm -f ${NAME}
 
 run: ${NAME}
