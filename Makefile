@@ -4,6 +4,8 @@
 
 NAME		= pipex
 CFLAGS		= -Wall -Wextra -Werror -MP -MD -g
+LIBFT_DIR	= src/libft/
+LIBFT		= ft
 
 SRCS_DIR	= src
 UTILS_DIR	= src/utils
@@ -33,12 +35,15 @@ OBJS		= \
 all: ${NAME}
 
 ${NAME}: ${OBJS}
-	${CC} ${CFLAGS} -o ${NAME} ${OBJS}
+	@make -C ${LIBFT_DIR}
+	${CC} ${CFLAGS} -o ${NAME} ${OBJS} -L${LIBFT_DIR} -l${LIBFT}
 
-clean: 
+clean:
+	@make -C libft clean
 	@rm -rf ${OBJS_DIR}
 
 fclean: clean
+	@make -C libft fclean
 	@rm -f ${NAME}
 
 run: ${NAME}
