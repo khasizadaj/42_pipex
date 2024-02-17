@@ -4,6 +4,8 @@
 
 NAME		= pipex
 CFLAGS		= -Wall -Wextra -Werror -MP -MD -g
+LIBFT_DIR	= src/libft/
+LIBFT		= ft
 
 SRCS_DIR	= src
 UTILS_DIR	= src/utils
@@ -13,7 +15,8 @@ SRCS		= \
 	${SRCS_DIR}/main.c
 
 SRCS_UTILS	= \
-	${UTILS_DIR}/putchar.c
+	${UTILS_DIR}/data.c \
+	${UTILS_DIR}/error.c
 
 # If you need another directory, add it here
 # SRCS_DIR	+= ...
@@ -33,12 +36,15 @@ OBJS		= \
 all: ${NAME}
 
 ${NAME}: ${OBJS}
-	${CC} ${CFLAGS} -o ${NAME} ${OBJS}
+	@make -C ${LIBFT_DIR}
+	${CC} ${CFLAGS} -o ${NAME} ${OBJS} -L${LIBFT_DIR} -l${LIBFT}
 
-clean: 
+clean:
+	@make -C ${LIBFT_DIR} clean
 	@rm -rf ${OBJS_DIR}
 
 fclean: clean
+	@make -C ${LIBFT_DIR} fclean
 	@rm -f ${NAME}
 
 run: ${NAME}
