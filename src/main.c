@@ -6,7 +6,7 @@
 /*   By: jkhasiza <jkhasiza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/08 20:30:33 by jkhasiza          #+#    #+#             */
-/*   Updated: 2024/02/16 00:20:39 by jkhasiza         ###   ########.fr       */
+/*   Updated: 2024/02/17 23:47:10 by jkhasiza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,21 +51,26 @@ int	command_exists(char *command, char **dirs)
 	return (false);
 }
 
+/*
+	Function vlaidates the inputs provided by the user. Like bash,
+	it only informs the user about issues.
+	
+	Having errors doesn't stop the program from running except
+	provided argument count is less than 4 (i.e. 5 with program name).
+*/
 int	validate_input(int argc, char **argv, char **dirs)
 {
 	int	i;
 
 	if (argc < 5)
-		return (ft_putstr_fd(USAGE_ERR_MSG, 2), USAGE_ERR);
+		return (USAGE_ERR);
 	if (access(argv[1], R_OK) != 0)
-		return (perror(ACCESS_ERR_MSG), ACCESS_ERR);
-	if (access(argv[argc - 1], W_OK) != 0)
-		return (perror(ACCESS_ERR_MSG), ACCESS_ERR);
+		ft_putstr_fd(ACCESS_ERR_MSG, STDERR);
 	i = 2;
 	while (i < argc - 1)
 	{
 		if (!command_exists(argv[i], dirs))
-			return (perror(ACCESS_ERR_MSG), COMMAND_ERR);
+			ft_putstr_fd(COMMAND_ERR_MSG, STDERR);
 		i++;
 	}
 	return (0);
@@ -73,17 +78,18 @@ int	validate_input(int argc, char **argv, char **dirs)
 
 int	main(int argc, char **argv, char **envp)
 {
-	char	**dirs;
 	char	*path;
-	int		exit_code;
+	t_data	data;
 
+	init_data(&data);
 	path = extract_path(envp);
 	if (!path)
-		return (perror(PATH_ERR_MSG), PATH_ERR);
-	dirs = ft_split(path, ':');
-	if (!dirs)
-		return (perror(MEMO_ERR_MSG), 13);
-	exit_code = validate_input(argc, argv, dirs) != 0;
-	if (exit_code != 0)
-		exit(exit_code);
+		exit_gracefully(&data, PATH_ERR);
+	data.dirs = ft_split(path, ':');
+	if (!data.dirs)
+		exit_gracefully(&data, MEMO_ERR);
+	data.exit_code = validate_input(argc, argv, data.dirs);
+	if (data.exit_code != 0)
+		exit_gracefully(&data, data.exit_code);
+	exit_gracefully(&data, 0);
 }
