@@ -6,7 +6,7 @@
 /*   By: jkhasiza <jkhasiza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/08 20:34:41 by jkhasiza          #+#    #+#             */
-/*   Updated: 2024/02/16 00:16:27 by jkhasiza         ###   ########.fr       */
+/*   Updated: 2024/02/17 22:48:20 by jkhasiza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,14 @@
 
 # define COMMAND_ERR 15
 # define COMMAND_ERR_MSG "Command error"
+
+typedef struct s_data
+{
+    char    **dirs;
+    int     in_fd;
+    int     out_fd;
+    int     exit_code;
+}   t_data;
 
 void    ft_putchar(char c);
 
