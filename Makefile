@@ -16,8 +16,7 @@ SRCS		= \
 
 SRCS_UTILS	= \
 	${UTILS_DIR}/data.c \
-	${UTILS_DIR}/error.c \
-	${UTILS_DIR}/putchar.c
+	${UTILS_DIR}/error.c
 
 # If you need another directory, add it here
 # SRCS_DIR	+= ...
