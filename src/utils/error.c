@@ -6,7 +6,7 @@
 /*   By: jkhasiza <jkhasiza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/18 21:01:31 by jkhasiza          #+#    #+#             */
-/*   Updated: 2024/02/17 23:48:23 by jkhasiza         ###   ########.fr       */
+/*   Updated: 2024/02/18 15:23:26 by jkhasiza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,5 +40,7 @@ void	exit_gracefully(t_data *data, int reason)
 			free(data->dirs[i]);
 		free(data->dirs);
 	}
+	if (data->cmds)
+		free_commmands(data->cmds);
 	exit_for(reason);
 }

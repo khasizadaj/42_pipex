@@ -1,24 +1,38 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   data.c                                             :+:      :+:    :+:   */
+/*   freer.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jkhasiza <jkhasiza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/02/17 22:54:51 by jkhasiza          #+#    #+#             */
-/*   Updated: 2024/02/18 15:06:43 by jkhasiza         ###   ########.fr       */
+/*   Created: 2024/02/18 15:02:12 by jkhasiza          #+#    #+#             */
+/*   Updated: 2024/02/18 20:56:10 by jkhasiza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/pipex.h"
 
-void	init_data(t_data *data)
+void	free_commmands(t_command **cmds)
 {
-	data->dirs = NULL;
-	data->in_fd = -1;
-	data->out_fd = -1;
-	data->exit_code = UNKNOWN_ERR;
-	data->cmd_count = -1;
-	data->cmds = NULL;
-	return ;
+	int			i;
+	int			j;
+	t_command	*temp;
+
+	i = 0;
+	while (cmds[i])
+	{
+		temp = cmds[i];
+		if (temp->path)
+			free(temp->path);
+		if (temp->args)
+		{
+			j = -1;
+			while (temp->args[++j])
+				free(temp->args[j]);
+			free(temp->args);
+		}
+		free(cmds[i]);
+		i++;
+	}
+	free(cmds);
 }
