@@ -6,7 +6,7 @@
 /*   By: jkhasiza <jkhasiza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/08 20:34:41 by jkhasiza          #+#    #+#             */
-/*   Updated: 2024/02/18 20:54:29 by jkhasiza         ###   ########.fr       */
+/*   Updated: 2024/02/18 21:43:32 by jkhasiza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,9 @@
 # define UNKNOWN_ERR 10
 # define UNKNOWN_ERR_MSG "Unknown error\n"
 
+# define PIPE_ERR 16
+# define PIPE_ERR_MSG "Pipe couldn't be created"
+
 # define STDIN 0
 # define STDOUT 1
 # define STDERR 2
@@ -53,6 +56,7 @@ typedef struct s_data
     char        **dirs;
     int         cmd_count;
     t_command   **cmds;
+    int         **pipes;
     int         in_fd;
     int         out_fd;
     int         exit_code;
@@ -60,8 +64,11 @@ typedef struct s_data
 
 void	    exit_gracefully(t_data *data, int reason);
 void        free_commmands(t_command **cmds);
-void	    init_data(t_data *data);
+void        free_dirs(t_data *data);
+void        free_pipes(t_data *data);
 void	    init_commands(t_data *data);
+void	    init_data(t_data *data);
+void        init_pipes(t_data *data);
 t_command	*get_command(t_data *data, char *raw_command);
 
 

@@ -6,7 +6,7 @@
 /*   By: jkhasiza <jkhasiza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/08 20:30:33 by jkhasiza          #+#    #+#             */
-/*   Updated: 2024/02/18 20:54:37 by jkhasiza         ###   ########.fr       */
+/*   Updated: 2024/02/18 21:39:12 by jkhasiza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,6 +101,11 @@ void	parse_input(t_data *data, int argc, char **argv)
 	}
 }
 
+void	run(t_data *data)
+{
+	init_pipes(data);
+}
+
 int	main(int argc, char **argv, char **envp)
 {
 	char	*path;
@@ -117,5 +122,6 @@ int	main(int argc, char **argv, char **envp)
 	if (data.exit_code != 0)
 		exit_gracefully(&data, data.exit_code);
 	parse_input(&data, argc, argv);
+	run(&data);
 	exit_gracefully(&data, 0);
 }

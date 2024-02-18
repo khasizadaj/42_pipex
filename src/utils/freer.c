@@ -6,7 +6,7 @@
 /*   By: jkhasiza <jkhasiza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/18 15:02:12 by jkhasiza          #+#    #+#             */
-/*   Updated: 2024/02/18 20:56:10 by jkhasiza         ###   ########.fr       */
+/*   Updated: 2024/02/18 21:38:28 by jkhasiza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,4 +35,27 @@ void	free_commmands(t_command **cmds)
 		i++;
 	}
 	free(cmds);
+}
+
+void	free_pipes(t_data *data)
+{
+	int	i;
+
+	i = 0;
+	while (i < data->cmd_count + 1 && data->pipes[i])
+		{
+			free(data->pipes[i]);
+			i++;
+		}
+		free(data->pipes);
+}
+
+void	free_dirs(t_data *data)
+{
+	int	i;
+
+	i = -1;
+	while (data->dirs[++i])
+		free(data->dirs[i]);
+	free(data->dirs);
 }
