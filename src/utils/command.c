@@ -6,7 +6,7 @@
 /*   By: jkhasiza <jkhasiza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/18 20:50:20 by jkhasiza          #+#    #+#             */
-/*   Updated: 2024/02/18 20:55:21 by jkhasiza         ###   ########.fr       */
+/*   Updated: 2024/02/18 20:58:46 by jkhasiza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,8 @@
 	Function initialies commands field and sets all items to
 	`NULL`. This is needed to exit in the middle of the process
 	if something goes south.
+
+	Note: It also null terminates the array.
 */
 void	init_commands(t_data *data)
 {
