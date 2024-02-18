@@ -6,7 +6,7 @@
 /*   By: jkhasiza <jkhasiza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/08 20:34:41 by jkhasiza          #+#    #+#             */
-/*   Updated: 2024/02/17 23:47:53 by jkhasiza         ###   ########.fr       */
+/*   Updated: 2024/02/18 15:26:16 by jkhasiza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,16 +42,24 @@
 # define STDOUT 1
 # define STDERR 2
 
+typedef struct s_command
+{
+    char    *path;
+    char    **args;
+}   t_command;
+
 typedef struct s_data
 {
-    char    **dirs;
-    int     in_fd;
-    int     out_fd;
-    int     exit_code;
+    char        **dirs;
+    int         cmd_count;
+    t_command   **cmds;
+    int         in_fd;
+    int         out_fd;
+    int         exit_code;
 }   t_data;
 
 void	exit_gracefully(t_data *data, int reason);
+void    free_commmands(t_command **cmds);
 void	init_data(t_data *data);
-void    ft_putchar(char c);
 
 #endif

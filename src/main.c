@@ -6,7 +6,7 @@
 /*   By: jkhasiza <jkhasiza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/08 20:30:33 by jkhasiza          #+#    #+#             */
-/*   Updated: 2024/02/17 23:47:10 by jkhasiza         ###   ########.fr       */
+/*   Updated: 2024/02/18 15:24:08 by jkhasiza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ int	command_exists(char *command, char **dirs)
 	Having errors doesn't stop the program from running except
 	provided argument count is less than 4 (i.e. 5 with program name).
 */
-int	validate_input(int argc, char **argv, char **dirs)
+int	validate_input(t_data *data, int argc, char **argv)
 {
 	int	i;
 
@@ -69,11 +69,53 @@ int	validate_input(int argc, char **argv, char **dirs)
 	i = 2;
 	while (i < argc - 1)
 	{
-		if (!command_exists(argv[i], dirs))
+		if (!command_exists(argv[i], data->dirs))
 			ft_putstr_fd(COMMAND_ERR_MSG, STDERR);
 		i++;
 	}
 	return (0);
+}
+
+/*
+	collect commands
+	get pathes to commands
+	save it struct array
+*/
+void	init_commands(t_data *data)
+{
+	int	i;
+
+	data->cmds = malloc(sizeof(t_command) * (data->cmd_count + 1));
+	if (!data->cmds)
+		exit_gracefully(data, MEMO_ERR);
+	i = -1;
+	while (++i <= data->cmd_count)
+		data->cmds[i] = NULL;
+}
+
+void	parse_input(t_data *data, int argc, char **argv)
+{
+	int			fd;
+	int			i;
+	t_command	*cmd;
+
+	fd = open(argv[1], O_RDONLY);
+	if (fd != -1)
+		data->in_fd = fd;
+	fd = open(argv[argc - 1], O_WRONLY);
+	if (fd != -1)
+		data->out_fd = fd;
+	data->cmd_count = argc - 3;
+	init_commands(data);
+	i = 2;
+	while (i < argc - 1)
+	{
+		cmd = malloc(sizeof(t_command));
+		if (!cmd)
+			exit_gracefully(data, MEMO_ERR);
+		data->cmds[i - 2] = cmd;
+		i++;
+	}
 }
 
 int	main(int argc, char **argv, char **envp)
@@ -88,8 +130,9 @@ int	main(int argc, char **argv, char **envp)
 	data.dirs = ft_split(path, ':');
 	if (!data.dirs)
 		exit_gracefully(&data, MEMO_ERR);
-	data.exit_code = validate_input(argc, argv, data.dirs);
+	data.exit_code = validate_input(&data, argc, argv);
 	if (data.exit_code != 0)
 		exit_gracefully(&data, data.exit_code);
+	parse_input(&data, argc, argv);
 	exit_gracefully(&data, 0);
 }
