@@ -6,7 +6,7 @@
 /*   By: jkhasiza <jkhasiza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/18 21:01:31 by jkhasiza          #+#    #+#             */
-/*   Updated: 2024/02/18 15:23:26 by jkhasiza         ###   ########.fr       */
+/*   Updated: 2024/02/18 21:42:59 by jkhasiza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,20 +26,17 @@ static void	exit_for(int reason)
 		perror(UNKNOWN_ERR_MSG);
 	else if (reason == USAGE_ERR)
 		perror(USAGE_ERR_MSG);
+	else if (reason == PIPE_ERR)
+		perror(PIPE_ERR_MSG);
 	exit(reason);
 }
 
 void	exit_gracefully(t_data *data, int reason)
 {
-	int	i;
-
-	i = -1;
 	if (data->dirs)
-	{
-		while (data->dirs[++i])
-			free(data->dirs[i]);
-		free(data->dirs);
-	}
+		free_dirs(data);
+	if (data->pipes)
+		free_pipes(data);
 	if (data->cmds)
 		free_commmands(data->cmds);
 	exit_for(reason);
