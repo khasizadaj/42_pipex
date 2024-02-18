@@ -15,6 +15,7 @@ SRCS		= \
 	${SRCS_DIR}/main.c
 
 SRCS_UTILS	= \
+	${UTILS_DIR}/command.c \
 	${UTILS_DIR}/data.c \
 	${UTILS_DIR}/error.c \
 	${UTILS_DIR}/freer.c
