@@ -6,7 +6,7 @@
 /*   By: jkhasiza <jkhasiza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/08 20:34:41 by jkhasiza          #+#    #+#             */
-/*   Updated: 2024/02/18 15:26:16 by jkhasiza         ###   ########.fr       */
+/*   Updated: 2024/02/18 20:54:29 by jkhasiza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,8 +58,11 @@ typedef struct s_data
     int         exit_code;
 }   t_data;
 
-void	exit_gracefully(t_data *data, int reason);
-void    free_commmands(t_command **cmds);
-void	init_data(t_data *data);
+void	    exit_gracefully(t_data *data, int reason);
+void        free_commmands(t_command **cmds);
+void	    init_data(t_data *data);
+void	    init_commands(t_data *data);
+t_command	*get_command(t_data *data, char *raw_command);
+
 
 #endif
