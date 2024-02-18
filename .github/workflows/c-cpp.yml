@@ -12,7 +12,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: install dependencies
-      run: sudo apt install -y valgrind
+      run: sudo apt-get install -y valgrind && sudo apt-get upgrade -y
     - name: make
       run: make
     - name: test
