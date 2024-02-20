@@ -6,7 +6,7 @@
 /*   By: jkhasiza <jkhasiza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/08 20:30:33 by jkhasiza          #+#    #+#             */
-/*   Updated: 2024/02/18 21:39:12 by jkhasiza         ###   ########.fr       */
+/*   Updated: 2024/02/20 23:52:41 by jkhasiza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,9 +101,38 @@ void	parse_input(t_data *data, int argc, char **argv)
 	}
 }
 
+void	run_commands(t_data *data)
+{
+	int	i;
+	int	pid;
+
+	i = 0;
+	while (i < data->cmd_count)
+	{
+		pid = fork();
+		if (pid == -1)
+			exit_gracefully(data, FORK_ERR);
+		if (pid == 0)
+		{
+			// close(fd[0]); // close more later
+			ft_printf("Running command: %s\n", data->cmds[i]->path);
+			dup2(data->pipes[i + 1][1], STDOUT_FILENO);
+			execve(data->cmds[i]->path, data->cmds[i]->args, data->envp);
+		}
+		else
+		{
+			// close(fd[1]); // close more later
+			dup2(data->pipes[i][0], STDIN_FILENO);
+			waitpid(pid, NULL, 0);
+		}
+		i++;
+	}
+}
 void	run(t_data *data)
 {
 	init_pipes(data);
+	ft_printf("Running commands\n");
+	run_commands(data);
 }
 
 int	main(int argc, char **argv, char **envp)
@@ -111,7 +140,7 @@ int	main(int argc, char **argv, char **envp)
 	char	*path;
 	t_data	data;
 
-	init_data(&data);
+	init_data(&data, envp);
 	path = extract_path(envp);
 	if (!path)
 		exit_gracefully(&data, PATH_ERR);

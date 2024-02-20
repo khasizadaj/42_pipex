@@ -6,7 +6,7 @@
 /*   By: jkhasiza <jkhasiza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/08 20:34:41 by jkhasiza          #+#    #+#             */
-/*   Updated: 2024/02/18 21:43:32 by jkhasiza         ###   ########.fr       */
+/*   Updated: 2024/02/20 23:43:07 by jkhasiza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 # include <stdlib.h>
 # include <fcntl.h>
 # include <errno.h>
+# include <sys/wait.h>
 # include "../src/libft/libft.h"
 
 # define PATH_ERR 11
@@ -41,6 +42,9 @@
 # define PIPE_ERR 16
 # define PIPE_ERR_MSG "Pipe couldn't be created"
 
+# define FORK_ERR 17
+# define FORK_ERR_MSG "Fork couldn't be created"
+
 # define STDIN 0
 # define STDOUT 1
 # define STDERR 2
@@ -57,6 +61,7 @@ typedef struct s_data
     int         cmd_count;
     t_command   **cmds;
     int         **pipes;
+    char        **envp;
     int         in_fd;
     int         out_fd;
     int         exit_code;
@@ -67,7 +72,7 @@ void        free_commmands(t_command **cmds);
 void        free_dirs(t_data *data);
 void        free_pipes(t_data *data);
 void	    init_commands(t_data *data);
-void	    init_data(t_data *data);
+void	    init_data(t_data *data, char **envp);
 void        init_pipes(t_data *data);
 t_command	*get_command(t_data *data, char *raw_command);
 

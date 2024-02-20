@@ -6,13 +6,13 @@
 /*   By: jkhasiza <jkhasiza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/17 22:54:51 by jkhasiza          #+#    #+#             */
-/*   Updated: 2024/02/18 21:18:14 by jkhasiza         ###   ########.fr       */
+/*   Updated: 2024/02/20 23:37:50 by jkhasiza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/pipex.h"
 
-void	init_data(t_data *data)
+void	init_data(t_data *data, char **envp)
 {
 	data->dirs = NULL;
 	data->pipes = NULL;
@@ -21,5 +21,6 @@ void	init_data(t_data *data)
 	data->exit_code = UNKNOWN_ERR;
 	data->cmd_count = -1;
 	data->cmds = NULL;
+	data->envp = envp;
 	return ;
 }
