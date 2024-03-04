@@ -6,7 +6,7 @@
 /*   By: jkhasiza <jkhasiza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/08 20:30:33 by jkhasiza          #+#    #+#             */
-/*   Updated: 2024/02/20 23:52:41 by jkhasiza         ###   ########.fr       */
+/*   Updated: 2024/03/04 20:22:59 by jkhasiza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,12 +82,14 @@ void	parse_input(t_data *data, int argc, char **argv)
 	int			i;
 	t_command	*cmd;
 
-	fd = open(argv[1], O_RDONLY);
-	if (fd != -1)
-		data->in_fd = fd;
-	fd = open(argv[argc - 1], O_WRONLY);
-	if (fd != -1)
-		data->out_fd = fd;
+	fd = open(argv[1], O_RDONLY, 0777);
+	if (fd == -1)
+		exit_gracefully(data, ACCESS_ERR);
+	data->in_fd = fd;
+	fd = open(argv[argc - 1], O_WRONLY | O_CREAT | O_TRUNC, 0777);
+	if (fd == -1)
+		exit_gracefully(data, ACCESS_ERR);
+	data->out_fd = fd;
 	data->cmd_count = argc - 3;
 	init_commands(data);
 	i = 2;
@@ -105,8 +107,10 @@ void	run_commands(t_data *data)
 {
 	int	i;
 	int	pid;
+	int	status;
 
 	i = 0;
+	status = 0;
 	while (i < data->cmd_count)
 	{
 		pid = fork();
@@ -114,14 +118,14 @@ void	run_commands(t_data *data)
 			exit_gracefully(data, FORK_ERR);
 		if (pid == 0)
 		{
-			// close(fd[0]); // close more later
+			close(data->pipes[i][0]); // close more later
 			ft_printf("Running command: %s\n", data->cmds[i]->path);
-			dup2(data->pipes[i + 1][1], STDOUT_FILENO);
+			dup2(data->pipes[i][1], STDOUT_FILENO);
 			execve(data->cmds[i]->path, data->cmds[i]->args, data->envp);
 		}
 		else
 		{
-			// close(fd[1]); // close more later
+			close(data->pipes[i][1]); // close more later
 			dup2(data->pipes[i][0], STDIN_FILENO);
 			waitpid(pid, NULL, 0);
 		}
@@ -133,6 +137,10 @@ void	run(t_data *data)
 	init_pipes(data);
 	ft_printf("Running commands\n");
 	run_commands(data);
+	dup2(data->out_fd, STDOUT_FILENO);
+	execve(data->cmds[data->cmd_count - 1]->path,
+		data->cmds[data->cmd_count - 1]->args,
+		data->envp);
 }
 
 int	main(int argc, char **argv, char **envp)
@@ -151,6 +159,6 @@ int	main(int argc, char **argv, char **envp)
 	if (data.exit_code != 0)
 		exit_gracefully(&data, data.exit_code);
 	parse_input(&data, argc, argv);
+	dup2(data.in_fd, STDIN_FILENO);
 	run(&data);
-	exit_gracefully(&data, 0);
 }
