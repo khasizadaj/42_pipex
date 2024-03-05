@@ -6,11 +6,12 @@
 /*   By: jkhasiza <jkhasiza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/08 20:30:33 by jkhasiza          #+#    #+#             */
-/*   Updated: 2024/03/04 20:22:59 by jkhasiza         ###   ########.fr       */
+/*   Updated: 2024/03/05 20:51:37 by jkhasiza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/pipex.h"
+#include <unistd.h>
 
 char	*extract_path(char **envp)
 {
@@ -111,6 +112,7 @@ void	run_commands(t_data *data)
 
 	i = 0;
 	status = 0;
+	printf("CMD COUNT: %d\n", data->cmd_count);
 	while (i < data->cmd_count)
 	{
 		pid = fork();
@@ -118,29 +120,42 @@ void	run_commands(t_data *data)
 			exit_gracefully(data, FORK_ERR);
 		if (pid == 0)
 		{
+			close(data->pipes[i][1]); // close more later
+			if (i == 0)
+				dup2(data->in_fd, data->pipes[i][0]);
+			else
+				dup2(data->pipes[i][0], STDIN_FILENO);
+			close(data->pipes[i][0]);
+			close(data->in_fd);
+
+			if (i == data->cmd_count - 1)
+			{
+				dup2(data->out_fd, STDOUT_FILENO);
+			}
+			else
+			{
+				dup2(data->pipes[i + 1][1], STDOUT_FILENO);
+				close(data->pipes[i + 1][1]);
+			}
 			close(data->pipes[i][0]); // close more later
-			ft_printf("Running command: %s\n", data->cmds[i]->path);
-			dup2(data->pipes[i][1], STDOUT_FILENO);
+			close(data->pipes[i+ 1][1]); // close more later
 			execve(data->cmds[i]->path, data->cmds[i]->args, data->envp);
 		}
 		else
 		{
 			close(data->pipes[i][1]); // close more later
-			dup2(data->pipes[i][0], STDIN_FILENO);
-			waitpid(pid, NULL, 0);
+			close(data->pipes[i][0]);
 		}
 		i++;
 	}
+	i = -1;
+	while (++i < data->cmd_count)
+		wait(NULL);
 }
 void	run(t_data *data)
 {
 	init_pipes(data);
-	ft_printf("Running commands\n");
 	run_commands(data);
-	dup2(data->out_fd, STDOUT_FILENO);
-	execve(data->cmds[data->cmd_count - 1]->path,
-		data->cmds[data->cmd_count - 1]->args,
-		data->envp);
 }
 
 int	main(int argc, char **argv, char **envp)
