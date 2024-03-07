@@ -6,11 +6,12 @@
 /*   By: jkhasiza <jkhasiza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/08 20:30:33 by jkhasiza          #+#    #+#             */
-/*   Updated: 2024/02/18 21:39:12 by jkhasiza         ###   ########.fr       */
+/*   Updated: 2024/03/07 13:19:05 by jkhasiza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/pipex.h"
+#include <unistd.h>
 
 char	*extract_path(char **envp)
 {
@@ -65,12 +66,12 @@ int	validate_input(t_data *data, int argc, char **argv)
 	if (argc < 5)
 		return (USAGE_ERR);
 	if (access(argv[1], R_OK) != 0)
-		ft_putstr_fd(ACCESS_ERR_MSG, STDERR);
+		ft_putstr_fd(ACCESS_ERR_MSG, STDERR_FILENO);
 	i = 2;
 	while (i < argc - 1)
 	{
 		if (!command_exists(argv[i], data->dirs))
-			ft_putstr_fd(COMMAND_ERR_MSG, STDERR);
+			ft_putstr_fd(COMMAND_ERR_MSG, STDERR_FILENO);
 		i++;
 	}
 	return (0);
@@ -82,12 +83,14 @@ void	parse_input(t_data *data, int argc, char **argv)
 	int			i;
 	t_command	*cmd;
 
-	fd = open(argv[1], O_RDONLY);
-	if (fd != -1)
-		data->in_fd = fd;
-	fd = open(argv[argc - 1], O_WRONLY);
-	if (fd != -1)
-		data->out_fd = fd;
+	fd = open(argv[1], O_RDONLY, 0777);
+	if (fd == -1)
+		exit_gracefully(data, ACCESS_ERR);
+	data->in_fd = fd;
+	fd = open(argv[argc - 1], O_WRONLY | O_CREAT | O_TRUNC, 0777);
+	if (fd == -1)
+		exit_gracefully(data, ACCESS_ERR);
+	data->out_fd = fd;
 	data->cmd_count = argc - 3;
 	init_commands(data);
 	i = 2;
@@ -101,9 +104,74 @@ void	parse_input(t_data *data, int argc, char **argv)
 	}
 }
 
+void	run_commands(t_data *data)
+{
+	int	i;
+	int	j;
+	int	pid;
+
+	i = 0;
+	printf("CMD COUNT: %d\n", data->cmd_count);
+	while (i < data->cmd_count)
+	{
+		pid = fork();
+		if (pid == -1)
+			exit_gracefully(data, FORK_ERR);
+		if (pid == 0)
+		{
+			j = -1;
+			while (++j < data->cmd_count)
+			{
+				if ((i == 0 && j == 0) || i != j)
+					close(data->pipes[j][0]);
+				if ((i == data->cmd_count - 1 && j == data->cmd_count - 1) || (i + 1 != j))
+					close(data->pipes[j][1]);
+			}
+			if (i == 0)
+			{
+				dup2(data->in_fd, STDIN_FILENO);
+			}
+			else
+			{
+				dup2(data->pipes[i][0], STDIN_FILENO);
+				close(data->pipes[i][0]);
+			}
+			if (i == data->cmd_count - 1)
+			{
+				dup2(data->out_fd, STDOUT_FILENO);
+			}
+			else
+			{
+				dup2(data->pipes[i + 1][1], STDOUT_FILENO);
+				close(data->pipes[i + 1][1]);
+			}
+			close(data->in_fd);
+			close(data->out_fd);
+			if (!data->cmds[i]->path)
+				return ;
+
+			if (execve(data->cmds[i]->path, data->cmds[i]->args, data->envp) == -1)
+				exit_gracefully(data, EXEC_ERR);
+		}
+		i++;
+	}
+	j = -1;
+	while (++j < data->cmd_count)
+	{
+		close(data->pipes[j][0]);
+		close(data->pipes[j][1]);
+	}
+	close(data->out_fd);
+	close(data->in_fd);
+	i = -1;
+	while (++i < data->cmd_count)
+		wait(NULL);
+}
+
 void	run(t_data *data)
 {
 	init_pipes(data);
+	run_commands(data);
 }
 
 int	main(int argc, char **argv, char **envp)
@@ -111,7 +179,7 @@ int	main(int argc, char **argv, char **envp)
 	char	*path;
 	t_data	data;
 
-	init_data(&data);
+	init_data(&data, envp);
 	path = extract_path(envp);
 	if (!path)
 		exit_gracefully(&data, PATH_ERR);

@@ -6,28 +6,31 @@
 /*   By: jkhasiza <jkhasiza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/18 21:01:31 by jkhasiza          #+#    #+#             */
-/*   Updated: 2024/02/18 21:42:59 by jkhasiza         ###   ########.fr       */
+/*   Updated: 2024/03/07 13:06:22 by jkhasiza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/pipex.h"
+#include <unistd.h>
 
 static void	exit_for(int reason)
 {
 	if (reason == PATH_ERR)
-		perror(PATH_ERR_MSG);
+		ft_putstr_fd(PATH_ERR_MSG, STDERR_FILENO);
+	else if (reason == EXEC_ERR)
+		ft_putstr_fd(EXEC_ERR_MSG, STDERR_FILENO);
 	else if (reason == MEMO_ERR)
-		perror(MEMO_ERR_MSG);
+		ft_putstr_fd(MEMO_ERR_MSG, STDERR_FILENO);
 	else if (reason == ACCESS_ERR)
-		perror(ACCESS_ERR_MSG);
+		ft_putstr_fd(ACCESS_ERR_MSG, STDERR_FILENO);
 	else if (reason == COMMAND_ERR)
-		perror(COMMAND_ERR_MSG);
+		ft_putstr_fd(COMMAND_ERR_MSG, STDERR_FILENO);
 	else if (reason == UNKNOWN_ERR)
-		perror(UNKNOWN_ERR_MSG);
+		ft_putstr_fd(UNKNOWN_ERR_MSG, STDERR_FILENO);
 	else if (reason == USAGE_ERR)
-		perror(USAGE_ERR_MSG);
+		ft_putstr_fd(USAGE_ERR_MSG, STDERR_FILENO);
 	else if (reason == PIPE_ERR)
-		perror(PIPE_ERR_MSG);
+		ft_putstr_fd(PIPE_ERR_MSG, STDERR_FILENO);
 	exit(reason);
 }
 
