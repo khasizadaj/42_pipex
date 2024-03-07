@@ -6,7 +6,7 @@
 /*   By: jkhasiza <jkhasiza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/08 20:34:41 by jkhasiza          #+#    #+#             */
-/*   Updated: 2024/03/07 01:10:32 by jkhasiza         ###   ########.fr       */
+/*   Updated: 2024/03/07 13:18:52 by jkhasiza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,16 +22,16 @@
 # include "../src/libft/libft.h"
 
 # define EXEC_ERR 6
-# define EXEC_ERR_MSG "Execution failed"
+# define EXEC_ERR_MSG "Execution failed\n"
 
 # define PATH_ERR 11
-# define PATH_ERR_MSG "PATH doesn't exist"
+# define PATH_ERR_MSG "PATH doesn't exist\n"
 
 # define MEMO_ERR 12
-# define MEMO_ERR_MSG "Memory allocation failed"
+# define MEMO_ERR_MSG "Memory allocation failed\n"
 
 # define USAGE_ERR 13
-# define USAGE_ERR_MSG "Usage: ./pipex file1 cmd1 cmd2 file2"
+# define USAGE_ERR_MSG "Usage: ./pipex file1 cmd1 cmd2 file2\n"
 
 # define ACCESS_ERR 14
 # define ACCESS_ERR_MSG "Access error\n"
@@ -43,14 +43,10 @@
 # define UNKNOWN_ERR_MSG "Unknown error\n"
 
 # define PIPE_ERR 16
-# define PIPE_ERR_MSG "Pipe couldn't be created"
+# define PIPE_ERR_MSG "Pipe couldn't be created\n"
 
 # define FORK_ERR 17
-# define FORK_ERR_MSG "Fork couldn't be created"
-
-# define STDIN 0
-# define STDOUT 1
-# define STDERR 2
+# define FORK_ERR_MSG "Fork couldn't be created\n"
 
 typedef struct s_command
 {

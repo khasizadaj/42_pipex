@@ -6,7 +6,7 @@
 /*   By: jkhasiza <jkhasiza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/08 20:30:33 by jkhasiza          #+#    #+#             */
-/*   Updated: 2024/03/07 01:24:08 by jkhasiza         ###   ########.fr       */
+/*   Updated: 2024/03/07 13:19:05 by jkhasiza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,12 +66,12 @@ int	validate_input(t_data *data, int argc, char **argv)
 	if (argc < 5)
 		return (USAGE_ERR);
 	if (access(argv[1], R_OK) != 0)
-		ft_putstr_fd(ACCESS_ERR_MSG, STDERR);
+		ft_putstr_fd(ACCESS_ERR_MSG, STDERR_FILENO);
 	i = 2;
 	while (i < argc - 1)
 	{
 		if (!command_exists(argv[i], data->dirs))
-			ft_putstr_fd(COMMAND_ERR_MSG, STDERR);
+			ft_putstr_fd(COMMAND_ERR_MSG, STDERR_FILENO);
 		i++;
 	}
 	return (0);
@@ -147,10 +147,11 @@ void	run_commands(t_data *data)
 			}
 			close(data->in_fd);
 			close(data->out_fd);
-			if (!data->cmds[i]->path || execve(data->cmds[i]->path, data->cmds[i]->args, data->envp) == -1)
-			{
+			if (!data->cmds[i]->path)
+				return ;
+
+			if (execve(data->cmds[i]->path, data->cmds[i]->args, data->envp) == -1)
 				exit_gracefully(data, EXEC_ERR);
-			}
 		}
 		i++;
 	}
@@ -166,6 +167,7 @@ void	run_commands(t_data *data)
 	while (++i < data->cmd_count)
 		wait(NULL);
 }
+
 void	run(t_data *data)
 {
 	init_pipes(data);
