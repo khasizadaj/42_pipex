@@ -6,7 +6,7 @@
 /*   By: jkhasiza <jkhasiza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/18 15:02:12 by jkhasiza          #+#    #+#             */
-/*   Updated: 2024/03/07 13:53:00 by jkhasiza         ###   ########.fr       */
+/*   Updated: 2024/03/07 18:42:48 by jkhasiza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,25 +60,26 @@ void	free_dirs(t_data *data)
 	free(data->dirs);
 }
 
-void	close_pipes(t_data *data, int child_proc_id, bool close_all)
+void	close_pipes(t_data *data)
 {
 	int j;
 
 	j = -1;
 	while (++j < data->cmd_count)
 	{
-		if ((child_proc_id == 0 && j == 0) || child_proc_id != j)
-			close(data->pipes[j][0]);
-		if ((child_proc_id == data->cmd_count - 1 && j == data->cmd_count - 1) || (child_proc_id + 1 != j))
-			close(data->pipes[j][1]);
+		// printf("Closed pipe[%d][0] = %d\n", j, data->pipes[j][0]);
+		close(data->pipes[j][0]);
+		// printf("Closed pipe[%d][1] = %d\n", j, data->pipes[j][1]);			
+		close(data->pipes[j][1]);
 	}
-	if (close_all)
+	if (data->in_fd != -1)
 	{
-		close(data->pipes[child_proc_id][0]);
-		close(data->pipes[child_proc_id + 1][1]);
-		if (data->in_fd != -1)
-			close(data->in_fd);
-		if (data->out_fd != -1)
-			close(data->out_fd);
+		// printf("Closed infile: %d\n", data->in_fd);			
+		close(data->in_fd);
+	}
+	if (data->out_fd != -1)
+	{
+		// printf("Closed outfile: %d\n", data->out_fd);			
+		close(data->out_fd);
 	}
 }

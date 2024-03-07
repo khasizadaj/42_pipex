@@ -6,7 +6,7 @@
 /*   By: jkhasiza <jkhasiza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/18 20:50:20 by jkhasiza          #+#    #+#             */
-/*   Updated: 2024/03/07 13:59:10 by jkhasiza         ###   ########.fr       */
+/*   Updated: 2024/03/07 16:51:04 by jkhasiza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,18 @@ void	init_commands(t_data *data)
 	i = -1;
 	while (++i <= data->cmd_count)
 		data->cmds[i] = NULL;
+}
+
+void	init_pids(t_data *data)
+{
+	int	i;
+
+	data->pids = malloc(sizeof(int) * (data->cmd_count + 1));
+	if (!data->pids)
+		exit_gracefully(data, MEMO_ERR);
+	i = -1;
+	while (++i <= data->cmd_count)
+		data->pids[i] = 0;
 }
 
 /*
