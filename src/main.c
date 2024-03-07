@@ -6,7 +6,7 @@
 /*   By: jkhasiza <jkhasiza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/08 20:30:33 by jkhasiza          #+#    #+#             */
-/*   Updated: 2024/03/07 13:19:05 by jkhasiza         ###   ########.fr       */
+/*   Updated: 2024/03/07 13:59:22 by jkhasiza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,31 +27,6 @@ char	*extract_path(char **envp)
 	return (NULL);
 }
 
-int	command_exists(char *command, char **dirs)
-{
-	char	*full_path;
-	char	*temp;
-	int		i;
-
-	i = 0;
-	while (dirs[i])
-	{
-		full_path = ft_strjoin(dirs[i], "/");
-		if (!full_path)
-			return (false);
-		temp = full_path;
-		full_path = ft_strjoin(temp, command);
-		free(temp);
-		if (!full_path)
-			return (false);
-		if (access(full_path, X_OK) == 0)
-			return (free(full_path), true);
-		free(full_path);
-		i++;
-	}
-	return (false);
-}
-
 /*
 	Function vlaidates the inputs provided by the user. Like bash,
 	it only informs the user about issues.
@@ -65,8 +40,6 @@ int	validate_input(t_data *data, int argc, char **argv)
 
 	if (argc < 5)
 		return (USAGE_ERR);
-	if (access(argv[1], R_OK) != 0)
-		ft_putstr_fd(ACCESS_ERR_MSG, STDERR_FILENO);
 	i = 2;
 	while (i < argc - 1)
 	{
@@ -85,7 +58,7 @@ void	parse_input(t_data *data, int argc, char **argv)
 
 	fd = open(argv[1], O_RDONLY, 0777);
 	if (fd == -1)
-		exit_gracefully(data, ACCESS_ERR);
+		ft_putstr_fd(ACCESS_ERR_MSG, STDERR_FILENO);
 	data->in_fd = fd;
 	fd = open(argv[argc - 1], O_WRONLY | O_CREAT | O_TRUNC, 0777);
 	if (fd == -1)
@@ -107,62 +80,41 @@ void	parse_input(t_data *data, int argc, char **argv)
 void	run_commands(t_data *data)
 {
 	int	i;
-	int	j;
 	int	pid;
 
-	i = 0;
-	printf("CMD COUNT: %d\n", data->cmd_count);
-	while (i < data->cmd_count)
+	i = -1;
+	while (++i < data->cmd_count)
 	{
 		pid = fork();
 		if (pid == -1)
 			exit_gracefully(data, FORK_ERR);
 		if (pid == 0)
 		{
-			j = -1;
-			while (++j < data->cmd_count)
-			{
-				if ((i == 0 && j == 0) || i != j)
-					close(data->pipes[j][0]);
-				if ((i == data->cmd_count - 1 && j == data->cmd_count - 1) || (i + 1 != j))
-					close(data->pipes[j][1]);
-			}
+			close_pipes(data, i, false);
 			if (i == 0)
-			{
 				dup2(data->in_fd, STDIN_FILENO);
-			}
 			else
 			{
 				dup2(data->pipes[i][0], STDIN_FILENO);
 				close(data->pipes[i][0]);
 			}
+			if (data->in_fd != -1)
+				close(data->in_fd);
 			if (i == data->cmd_count - 1)
-			{
 				dup2(data->out_fd, STDOUT_FILENO);
-			}
 			else
 			{
 				dup2(data->pipes[i + 1][1], STDOUT_FILENO);
 				close(data->pipes[i + 1][1]);
 			}
-			close(data->in_fd);
 			close(data->out_fd);
 			if (!data->cmds[i]->path)
 				return ;
-
 			if (execve(data->cmds[i]->path, data->cmds[i]->args, data->envp) == -1)
 				exit_gracefully(data, EXEC_ERR);
 		}
-		i++;
 	}
-	j = -1;
-	while (++j < data->cmd_count)
-	{
-		close(data->pipes[j][0]);
-		close(data->pipes[j][1]);
-	}
-	close(data->out_fd);
-	close(data->in_fd);
+	close_pipes(data, 0, true);
 	i = -1;
 	while (++i < data->cmd_count)
 		wait(NULL);

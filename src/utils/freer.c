@@ -6,7 +6,7 @@
 /*   By: jkhasiza <jkhasiza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/18 15:02:12 by jkhasiza          #+#    #+#             */
-/*   Updated: 2024/02/18 21:38:28 by jkhasiza         ###   ########.fr       */
+/*   Updated: 2024/03/07 13:53:00 by jkhasiza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,11 +43,11 @@ void	free_pipes(t_data *data)
 
 	i = 0;
 	while (i < data->cmd_count + 1 && data->pipes[i])
-		{
-			free(data->pipes[i]);
-			i++;
-		}
-		free(data->pipes);
+	{
+		free(data->pipes[i]);
+		i++;
+	}
+	free(data->pipes);
 }
 
 void	free_dirs(t_data *data)
@@ -58,4 +58,27 @@ void	free_dirs(t_data *data)
 	while (data->dirs[++i])
 		free(data->dirs[i]);
 	free(data->dirs);
+}
+
+void	close_pipes(t_data *data, int child_proc_id, bool close_all)
+{
+	int j;
+
+	j = -1;
+	while (++j < data->cmd_count)
+	{
+		if ((child_proc_id == 0 && j == 0) || child_proc_id != j)
+			close(data->pipes[j][0]);
+		if ((child_proc_id == data->cmd_count - 1 && j == data->cmd_count - 1) || (child_proc_id + 1 != j))
+			close(data->pipes[j][1]);
+	}
+	if (close_all)
+	{
+		close(data->pipes[child_proc_id][0]);
+		close(data->pipes[child_proc_id + 1][1]);
+		if (data->in_fd != -1)
+			close(data->in_fd);
+		if (data->out_fd != -1)
+			close(data->out_fd);
+	}
 }
