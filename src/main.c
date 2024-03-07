@@ -6,7 +6,7 @@
 /*   By: jkhasiza <jkhasiza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/08 20:30:33 by jkhasiza          #+#    #+#             */
-/*   Updated: 2024/03/05 20:51:37 by jkhasiza         ###   ########.fr       */
+/*   Updated: 2024/03/07 01:24:08 by jkhasiza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,11 +107,10 @@ void	parse_input(t_data *data, int argc, char **argv)
 void	run_commands(t_data *data)
 {
 	int	i;
+	int	j;
 	int	pid;
-	int	status;
 
 	i = 0;
-	status = 0;
 	printf("CMD COUNT: %d\n", data->cmd_count);
 	while (i < data->cmd_count)
 	{
@@ -120,14 +119,23 @@ void	run_commands(t_data *data)
 			exit_gracefully(data, FORK_ERR);
 		if (pid == 0)
 		{
-			close(data->pipes[i][1]); // close more later
+			j = -1;
+			while (++j < data->cmd_count)
+			{
+				if ((i == 0 && j == 0) || i != j)
+					close(data->pipes[j][0]);
+				if ((i == data->cmd_count - 1 && j == data->cmd_count - 1) || (i + 1 != j))
+					close(data->pipes[j][1]);
+			}
 			if (i == 0)
-				dup2(data->in_fd, data->pipes[i][0]);
+			{
+				dup2(data->in_fd, STDIN_FILENO);
+			}
 			else
+			{
 				dup2(data->pipes[i][0], STDIN_FILENO);
-			close(data->pipes[i][0]);
-			close(data->in_fd);
-
+				close(data->pipes[i][0]);
+			}
 			if (i == data->cmd_count - 1)
 			{
 				dup2(data->out_fd, STDOUT_FILENO);
@@ -137,17 +145,23 @@ void	run_commands(t_data *data)
 				dup2(data->pipes[i + 1][1], STDOUT_FILENO);
 				close(data->pipes[i + 1][1]);
 			}
-			close(data->pipes[i][0]); // close more later
-			close(data->pipes[i+ 1][1]); // close more later
-			execve(data->cmds[i]->path, data->cmds[i]->args, data->envp);
-		}
-		else
-		{
-			close(data->pipes[i][1]); // close more later
-			close(data->pipes[i][0]);
+			close(data->in_fd);
+			close(data->out_fd);
+			if (!data->cmds[i]->path || execve(data->cmds[i]->path, data->cmds[i]->args, data->envp) == -1)
+			{
+				exit_gracefully(data, EXEC_ERR);
+			}
 		}
 		i++;
 	}
+	j = -1;
+	while (++j < data->cmd_count)
+	{
+		close(data->pipes[j][0]);
+		close(data->pipes[j][1]);
+	}
+	close(data->out_fd);
+	close(data->in_fd);
 	i = -1;
 	while (++i < data->cmd_count)
 		wait(NULL);
@@ -174,6 +188,6 @@ int	main(int argc, char **argv, char **envp)
 	if (data.exit_code != 0)
 		exit_gracefully(&data, data.exit_code);
 	parse_input(&data, argc, argv);
-	dup2(data.in_fd, STDIN_FILENO);
 	run(&data);
+	exit_gracefully(&data, 0);
 }

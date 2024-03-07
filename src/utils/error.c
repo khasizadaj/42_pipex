@@ -6,7 +6,7 @@
 /*   By: jkhasiza <jkhasiza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/18 21:01:31 by jkhasiza          #+#    #+#             */
-/*   Updated: 2024/02/18 21:42:59 by jkhasiza         ###   ########.fr       */
+/*   Updated: 2024/03/07 01:12:12 by jkhasiza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,8 @@ static void	exit_for(int reason)
 {
 	if (reason == PATH_ERR)
 		perror(PATH_ERR_MSG);
+	else if (reason == EXEC_ERR)
+		perror(EXEC_ERR_MSG);
 	else if (reason == MEMO_ERR)
 		perror(MEMO_ERR_MSG);
 	else if (reason == ACCESS_ERR)

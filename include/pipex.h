@@ -6,7 +6,7 @@
 /*   By: jkhasiza <jkhasiza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/08 20:34:41 by jkhasiza          #+#    #+#             */
-/*   Updated: 2024/02/20 23:43:07 by jkhasiza         ###   ########.fr       */
+/*   Updated: 2024/03/07 01:10:32 by jkhasiza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,9 @@
 # include <errno.h>
 # include <sys/wait.h>
 # include "../src/libft/libft.h"
+
+# define EXEC_ERR 6
+# define EXEC_ERR_MSG "Execution failed"
 
 # define PATH_ERR 11
 # define PATH_ERR_MSG "PATH doesn't exist"
