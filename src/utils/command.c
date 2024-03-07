@@ -6,7 +6,7 @@
 /*   By: jkhasiza <jkhasiza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/18 20:50:20 by jkhasiza          #+#    #+#             */
-/*   Updated: 2024/03/07 19:14:26 by jkhasiza         ###   ########.fr       */
+/*   Updated: 2024/03/07 19:39:29 by jkhasiza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,13 @@ static void	set_command_path(t_data *data, t_command *command)
 	int		i;
 
 	i = -1;
+	if (access(command->args[0], X_OK) == 0)
+	{
+		command->path = ft_strdup(command->args[0]);
+		if (!command->path)
+			exit_gracefully(data, MEMO_ERR);
+		return ;
+	}
 	while (data->dirs[++i])
 	{
 		full_path = ft_strjoin(data->dirs[i], "/");
