@@ -6,7 +6,7 @@
 /*   By: jkhasiza <jkhasiza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/18 21:13:20 by jkhasiza          #+#    #+#             */
-/*   Updated: 2024/03/07 00:36:40 by jkhasiza         ###   ########.fr       */
+/*   Updated: 2024/03/07 13:26:30 by jkhasiza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,5 @@ void    init_pipes(t_data *data)
             exit_gracefully(data, MEMO_ERR);
         if (pipe(data->pipes[i]) == -1)
             exit_gracefully(data, PIPE_ERR);
-        printf("pipe[%d] = (%d, %d)\n", i, data->pipes[i][0], data->pipes[i][1]);
     }
 }
