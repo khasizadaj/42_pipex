@@ -6,7 +6,7 @@
 /*   By: jkhasiza <jkhasiza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/18 15:02:12 by jkhasiza          #+#    #+#             */
-/*   Updated: 2024/03/07 18:42:48 by jkhasiza         ###   ########.fr       */
+/*   Updated: 2024/03/07 19:15:05 by jkhasiza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,19 +67,11 @@ void	close_pipes(t_data *data)
 	j = -1;
 	while (++j < data->cmd_count)
 	{
-		// printf("Closed pipe[%d][0] = %d\n", j, data->pipes[j][0]);
 		close(data->pipes[j][0]);
-		// printf("Closed pipe[%d][1] = %d\n", j, data->pipes[j][1]);			
 		close(data->pipes[j][1]);
 	}
 	if (data->in_fd != -1)
-	{
-		// printf("Closed infile: %d\n", data->in_fd);			
 		close(data->in_fd);
-	}
 	if (data->out_fd != -1)
-	{
-		// printf("Closed outfile: %d\n", data->out_fd);			
 		close(data->out_fd);
-	}
 }
