@@ -6,7 +6,7 @@
 /*   By: jkhasiza <jkhasiza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/08 20:30:33 by jkhasiza          #+#    #+#             */
-/*   Updated: 2024/03/07 13:56:07 by jkhasiza         ###   ########.fr       */
+/*   Updated: 2024/03/07 13:59:22 by jkhasiza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,31 +25,6 @@ char	*extract_path(char **envp)
 		i++;
 	}
 	return (NULL);
-}
-
-int	command_exists(char *command, char **dirs)
-{
-	char	*full_path;
-	char	*temp;
-	int		i;
-
-	i = 0;
-	while (dirs[i])
-	{
-		full_path = ft_strjoin(dirs[i], "/");
-		if (!full_path)
-			return (false);
-		temp = full_path;
-		full_path = ft_strjoin(temp, command);
-		free(temp);
-		if (!full_path)
-			return (false);
-		if (access(full_path, X_OK) == 0)
-			return (free(full_path), true);
-		free(full_path);
-		i++;
-	}
-	return (false);
 }
 
 /*
