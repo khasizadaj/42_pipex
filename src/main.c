@@ -6,7 +6,7 @@
 /*   By: jkhasiza <jkhasiza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/08 20:30:33 by jkhasiza          #+#    #+#             */
-/*   Updated: 2024/03/07 13:59:22 by jkhasiza         ###   ########.fr       */
+/*   Updated: 2024/03/07 17:07:25 by jkhasiza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,6 +66,7 @@ void	parse_input(t_data *data, int argc, char **argv)
 	data->out_fd = fd;
 	data->cmd_count = argc - 3;
 	init_commands(data);
+	init_pids(data);
 	i = 2;
 	while (i < argc - 1)
 	{
@@ -80,44 +81,70 @@ void	parse_input(t_data *data, int argc, char **argv)
 void	run_commands(t_data *data)
 {
 	int	i;
-	int	pid;
+	int	status;
 
 	i = -1;
 	while (++i < data->cmd_count)
 	{
-		pid = fork();
-		if (pid == -1)
+		printf("Process %d\n\n", i);
+		data->pids[i] = fork();
+		if (data->pids[i] == -1)
 			exit_gracefully(data, FORK_ERR);
-		if (pid == 0)
+		if (data->pids[i] == 0)
 		{
-			close_pipes(data, i, false);
 			if (i == 0)
-				dup2(data->in_fd, STDIN_FILENO);
+			{
+				if (data->in_fd == -1 && dup2(data->in_fd, STDIN_FILENO) == -1)
+				{
+					printf("\n\nExiting 1\n\n");
+					close_pipes(data);
+					exit_gracefully(data, 100);
+				}
+			}	
 			else
 			{
-				dup2(data->pipes[i][0], STDIN_FILENO);
-				close(data->pipes[i][0]);
+				if (dup2(data->pipes[i][0], STDIN_FILENO) == -1)
+				{
+					printf("\n\nExiting 2\n\n");
+					close_pipes(data);
+					exit_gracefully(data, 101);
+				}
 			}
-			if (data->in_fd != -1)
-				close(data->in_fd);
+			printf("\n\nTowrds the end\n\n");
 			if (i == data->cmd_count - 1)
-				dup2(data->out_fd, STDOUT_FILENO);
+			{
+				printf("\nRedir for second command: %d\n\n", data->out_fd);
+				if (dup2(data->out_fd, STDOUT_FILENO) == -1)
+				{
+					close_pipes(data);
+					exit_gracefully(data, 103);
+				}
+			}
 			else
 			{
-				dup2(data->pipes[i + 1][1], STDOUT_FILENO);
-				close(data->pipes[i + 1][1]);
+				if (dup2(data->pipes[i + 1][1], STDOUT_FILENO) == -1)
+				{
+					close_pipes(data);
+					exit_gracefully(data, 102);
+				}
 			}
-			close(data->out_fd);
+			close_pipes(data);
 			if (!data->cmds[i]->path)
 				return ;
 			if (execve(data->cmds[i]->path, data->cmds[i]->args, data->envp) == -1)
 				exit_gracefully(data, EXEC_ERR);
 		}
 	}
-	close_pipes(data, 0, true);
+
 	i = -1;
 	while (++i < data->cmd_count)
-		wait(NULL);
+	{
+		waitpid(data->pids[i], &status, 0);
+		printf("PARENT: Child: %d returned value is: %d\n", i, WEXITSTATUS(data->pids[i]));
+	}
+
+	printf("MAIN PROCESS\n");
+	close_pipes(data);
 }
 
 void	run(t_data *data)
