@@ -6,7 +6,7 @@
 /*   By: jkhasiza <jkhasiza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/08 20:34:41 by jkhasiza          #+#    #+#             */
-/*   Updated: 2024/03/07 17:01:10 by jkhasiza         ###   ########.fr       */
+/*   Updated: 2024/03/07 18:29:16 by jkhasiza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,7 @@ void        free_commmands(t_command **cmds);
 void        free_dirs(t_data *data);
 void        free_pipes(t_data *data);
 void        close_pipes(t_data *data);
-// void        close_pipes(t_data *data, int child_proc_id, bool close_all);
+void        close_pipes_2(t_data *data, int child_proc_id, bool close_all);
 void	    init_commands(t_data *data);
 void        init_pids(t_data *data);
 void	    init_data(t_data *data, char **envp);

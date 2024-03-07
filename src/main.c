@@ -6,11 +6,12 @@
 /*   By: jkhasiza <jkhasiza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/08 20:30:33 by jkhasiza          #+#    #+#             */
-/*   Updated: 2024/03/07 17:07:25 by jkhasiza         ###   ########.fr       */
+/*   Updated: 2024/03/07 18:59:39 by jkhasiza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/pipex.h"
+#include <stdio.h>
 #include <unistd.h>
 
 char	*extract_path(char **envp)
@@ -86,7 +87,6 @@ void	run_commands(t_data *data)
 	i = -1;
 	while (++i < data->cmd_count)
 	{
-		printf("Process %d\n\n", i);
 		data->pids[i] = fork();
 		if (data->pids[i] == -1)
 			exit_gracefully(data, FORK_ERR);
@@ -94,26 +94,27 @@ void	run_commands(t_data *data)
 		{
 			if (i == 0)
 			{
-				if (data->in_fd == -1 && dup2(data->in_fd, STDIN_FILENO) == -1)
+				if (data->in_fd == -1)
 				{
-					printf("\n\nExiting 1\n\n");
 					close_pipes(data);
-					exit_gracefully(data, 100);
+					exit_gracefully(data, 0);
+				}
+				if ((dup2(data->in_fd, STDIN_FILENO) == -1))
+				{
+					close_pipes(data);
+					exit_gracefully(data, 110);
 				}
 			}	
 			else
 			{
 				if (dup2(data->pipes[i][0], STDIN_FILENO) == -1)
 				{
-					printf("\n\nExiting 2\n\n");
 					close_pipes(data);
 					exit_gracefully(data, 101);
 				}
 			}
-			printf("\n\nTowrds the end\n\n");
 			if (i == data->cmd_count - 1)
 			{
-				printf("\nRedir for second command: %d\n\n", data->out_fd);
 				if (dup2(data->out_fd, STDOUT_FILENO) == -1)
 				{
 					close_pipes(data);
@@ -137,14 +138,13 @@ void	run_commands(t_data *data)
 	}
 
 	i = -1;
+	close_pipes(data);
 	while (++i < data->cmd_count)
 	{
 		waitpid(data->pids[i], &status, 0);
-		printf("PARENT: Child: %d returned value is: %d\n", i, WEXITSTATUS(data->pids[i]));
+		if (WIFEXITED(status))
+			printf("Child %d exited with status %d\n", i, WEXITSTATUS(status));
 	}
-
-	printf("MAIN PROCESS\n");
-	close_pipes(data);
 }
 
 void	run(t_data *data)
