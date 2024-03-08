@@ -6,7 +6,7 @@
 /*   By: jkhasiza <jkhasiza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/08 20:34:41 by jkhasiza          #+#    #+#             */
-/*   Updated: 2024/03/07 19:14:20 by jkhasiza         ###   ########.fr       */
+/*   Updated: 2024/03/08 17:54:55 by jkhasiza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,7 +76,6 @@ void	    init_commands(t_data *data);
 void        init_pids(t_data *data);
 void	    init_data(t_data *data, char **envp);
 void        init_pipes(t_data *data);
-int         command_exists(char *command, char **dirs);
 t_command	*get_command(t_data *data, char *raw_command);
 
 

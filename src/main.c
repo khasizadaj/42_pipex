@@ -6,7 +6,7 @@
 /*   By: jkhasiza <jkhasiza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/08 20:30:33 by jkhasiza          #+#    #+#             */
-/*   Updated: 2024/03/07 19:44:07 by jkhasiza         ###   ########.fr       */
+/*   Updated: 2024/03/08 17:55:01 by jkhasiza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,8 +41,9 @@ void	validate_input(t_data *data)
 	i = -1;
 	while (++i < data->cmd_count)
 	{
-		printf("path: %s\n", data->cmds[i]->path);
-		if (data->cmds[i]->path && access(data->cmds[i]->path, X_OK) == -1)
+		if (!data->cmds[i]->path)
+			ft_putstr_fd(COMMAND_ERR_MSG, STDERR_FILENO);
+		else if (access(data->cmds[i]->path, X_OK) == -1)
 			ft_putstr_fd(COMMAND_ERR_MSG, STDERR_FILENO);
 	}
 }
