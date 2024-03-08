@@ -6,7 +6,7 @@
 /*   By: jkhasiza <jkhasiza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/18 15:02:12 by jkhasiza          #+#    #+#             */
-/*   Updated: 2024/03/07 19:15:05 by jkhasiza         ###   ########.fr       */
+/*   Updated: 2024/03/08 18:16:16 by jkhasiza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,7 @@ void	free_dirs(t_data *data)
 
 void	close_pipes(t_data *data)
 {
-	int j;
+	int	j;
 
 	j = -1;
 	while (++j < data->cmd_count)

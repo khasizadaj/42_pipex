@@ -6,7 +6,7 @@
 /*   By: jkhasiza <jkhasiza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/08 20:30:33 by jkhasiza          #+#    #+#             */
-/*   Updated: 2024/03/08 18:02:19 by jkhasiza         ###   ########.fr       */
+/*   Updated: 2024/03/08 18:14:51 by jkhasiza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,78 +52,6 @@ void	parse_input(t_data *data, int argc, char **argv)
 		data->cmds[i - 2] = cmd;
 		i++;
 	}
-}
-
-void	handle_write_redirection(t_data *data, int i)
-{
-	if (i == data->cmd_count - 1)
-	{
-		if (dup2(data->out_fd, STDOUT_FILENO) == -1)
-		{
-			close_pipes(data);
-			exit_gracefully(data, 103);
-		}
-	}
-	else
-	{
-		if (dup2(data->pipes[i + 1][1], STDOUT_FILENO) == -1)
-		{
-			close_pipes(data);
-			exit_gracefully(data, 102);
-		}
-	}
-}
-
-void	handle_read_redirection(t_data *data, int i)
-{
-	if (i == 0)
-	{
-		if (data->in_fd == -1)
-		{
-			close_pipes(data);
-			exit_gracefully(data, 0);
-		}
-		if (dup2(data->in_fd, STDIN_FILENO) == -1)
-		{
-			close_pipes(data);
-			exit_gracefully(data, 110);
-		}
-	}	
-	else
-	{
-		if (dup2(data->pipes[i][0], STDIN_FILENO) == -1)
-		{
-			close_pipes(data);
-			exit_gracefully(data, 101);
-		}
-	}
-}
-
-void	run_commands(t_data *data)
-{
-	int	i;
-
-	i = -1;
-	while (++i < data->cmd_count)
-	{
-		data->pids[i] = fork();
-		if (data->pids[i] == -1)
-			exit_gracefully(data, FORK_ERR);
-		if (data->pids[i] == 0)
-		{
-			handle_read_redirection(data, i);
-			handle_write_redirection(data, i);
-			close_pipes(data);
-			if (!data->cmds[i]->path)	
-				exit_gracefully(data, COMMAND_ERR);
-			if (execve(data->cmds[i]->path, data->cmds[i]->args, data->envp) == -1)
-				exit_gracefully(data, EXEC_ERR);
-		}
-	}
-	i = -1;
-	close_pipes(data);
-	while (++i < data->cmd_count)
-		waitpid(data->pids[i], NULL, 0);
 }
 
 void	run(t_data *data)
