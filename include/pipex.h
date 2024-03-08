@@ -6,7 +6,7 @@
 /*   By: jkhasiza <jkhasiza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/08 20:34:41 by jkhasiza          #+#    #+#             */
-/*   Updated: 2024/03/08 18:19:03 by jkhasiza         ###   ########.fr       */
+/*   Updated: 2024/03/08 18:33:16 by jkhasiza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,11 +73,13 @@ void		free_dirs(t_data *data);
 void		free_pipes(t_data *data);
 void		close_pipes(t_data *data);
 void		init_commands(t_data *data);
+void		run_commands(t_data *data);
 void		init_pids(t_data *data);
 void		init_data(t_data *data, char **envp);
 void		init_pipes(t_data *data);
 void		handle_read_redirection(t_data *data, int i);
 void		handle_write_redirection(t_data *data, int i);
+bool		set_arg_as_path(t_data *data, t_command *command);
 t_command	*get_command(t_data *data, char *raw_command);
 
 #endif

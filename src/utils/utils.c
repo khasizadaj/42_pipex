@@ -6,7 +6,7 @@
 /*   By: jkhasiza <jkhasiza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/08 18:14:41 by jkhasiza          #+#    #+#             */
-/*   Updated: 2024/03/08 18:15:47 by jkhasiza         ###   ########.fr       */
+/*   Updated: 2024/03/08 18:38:54 by jkhasiza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,4 +55,16 @@ void	handle_read_redirection(t_data *data, int i)
 			exit_gracefully(data, 101);
 		}
 	}
+}
+
+bool	set_arg_as_path(t_data *data, t_command *command)
+{
+	if (access(command->args[0], X_OK) == 0)
+	{
+		command->path = ft_strdup(command->args[0]);
+		if (!command->path)
+			exit_gracefully(data, MEMO_ERR);
+		return (true);
+	}
+	return (false);
 }
