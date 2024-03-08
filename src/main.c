@@ -6,7 +6,7 @@
 /*   By: jkhasiza <jkhasiza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/08 20:30:33 by jkhasiza          #+#    #+#             */
-/*   Updated: 2024/03/07 19:15:28 by jkhasiza         ###   ########.fr       */
+/*   Updated: 2024/03/08 18:02:19 by jkhasiza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,29 +24,6 @@ char	*extract_path(char **envp)
 		i++;
 	}
 	return (NULL);
-}
-
-/*
-	Function vlaidates the inputs provided by the user. Like bash,
-	it only informs the user about issues.
-	
-	Having errors doesn't stop the program from running except
-	provided argument count is less than 4 (i.e. 5 with program name).
-*/
-int	validate_input(t_data *data, int argc, char **argv)
-{
-	int	i;
-
-	if (argc < 5)
-		return (USAGE_ERR);
-	i = 2;
-	while (i < argc - 1)
-	{
-		if (!command_exists(argv[i], data->dirs))
-			ft_putstr_fd(COMMAND_ERR_MSG, STDERR_FILENO);
-		i++;
-	}
-	return (0);
 }
 
 void	parse_input(t_data *data, int argc, char **argv)
@@ -137,8 +114,8 @@ void	run_commands(t_data *data)
 			handle_read_redirection(data, i);
 			handle_write_redirection(data, i);
 			close_pipes(data);
-			if (!data->cmds[i]->path)
-				exit_gracefully(data, 0);
+			if (!data->cmds[i]->path)	
+				exit_gracefully(data, COMMAND_ERR);
 			if (execve(data->cmds[i]->path, data->cmds[i]->args, data->envp) == -1)
 				exit_gracefully(data, EXEC_ERR);
 		}
@@ -161,15 +138,14 @@ int	main(int argc, char **argv, char **envp)
 	t_data	data;
 
 	init_data(&data, envp);
+	if (argc < 5)
+		exit_gracefully(&data, USAGE_ERR);
 	path = extract_path(envp);
 	if (!path)
 		exit_gracefully(&data, PATH_ERR);
 	data.dirs = ft_split(path, ':');
 	if (!data.dirs)
 		exit_gracefully(&data, MEMO_ERR);
-	data.exit_code = validate_input(&data, argc, argv);
-	if (data.exit_code != 0)
-		exit_gracefully(&data, data.exit_code);
 	parse_input(&data, argc, argv);
 	run(&data);
 	exit_gracefully(&data, 0);

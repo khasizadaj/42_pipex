@@ -6,7 +6,7 @@
 /*   By: jkhasiza <jkhasiza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/18 20:50:20 by jkhasiza          #+#    #+#             */
-/*   Updated: 2024/03/07 19:14:26 by jkhasiza         ###   ########.fr       */
+/*   Updated: 2024/03/08 17:54:27 by jkhasiza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,13 @@ static void	set_command_path(t_data *data, t_command *command)
 	int		i;
 
 	i = -1;
+	if (access(command->args[0], X_OK) == 0)
+	{
+		command->path = ft_strdup(command->args[0]);
+		if (!command->path)
+			exit_gracefully(data, MEMO_ERR);
+		return ;
+	}
 	while (data->dirs[++i])
 	{
 		full_path = ft_strjoin(data->dirs[i], "/");
@@ -97,29 +104,4 @@ t_command	*get_command(t_data *data, char *raw_command)
 		return (NULL);
 	set_command_path(data, cmd);
 	return (cmd);
-}
-
-int	command_exists(char *command, char **dirs)
-{
-	char	*full_path;
-	char	*temp;
-	int		i;
-
-	i = 0;
-	while (dirs[i])
-	{
-		full_path = ft_strjoin(dirs[i], "/");
-		if (!full_path)
-			return (false);
-		temp = full_path;
-		full_path = ft_strjoin(temp, command);
-		free(temp);
-		if (!full_path)
-			return (false);
-		if (access(full_path, X_OK) == 0)
-			return (free(full_path), true);
-		free(full_path);
-		i++;
-	}
-	return (false);
 }
