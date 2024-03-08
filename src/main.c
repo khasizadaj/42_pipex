@@ -6,12 +6,11 @@
 /*   By: jkhasiza <jkhasiza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/08 20:30:33 by jkhasiza          #+#    #+#             */
-/*   Updated: 2024/03/07 13:59:22 by jkhasiza         ###   ########.fr       */
+/*   Updated: 2024/03/08 18:02:19 by jkhasiza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/pipex.h"
-#include <unistd.h>
 
 char	*extract_path(char **envp)
 {
@@ -25,29 +24,6 @@ char	*extract_path(char **envp)
 		i++;
 	}
 	return (NULL);
-}
-
-/*
-	Function vlaidates the inputs provided by the user. Like bash,
-	it only informs the user about issues.
-	
-	Having errors doesn't stop the program from running except
-	provided argument count is less than 4 (i.e. 5 with program name).
-*/
-int	validate_input(t_data *data, int argc, char **argv)
-{
-	int	i;
-
-	if (argc < 5)
-		return (USAGE_ERR);
-	i = 2;
-	while (i < argc - 1)
-	{
-		if (!command_exists(argv[i], data->dirs))
-			ft_putstr_fd(COMMAND_ERR_MSG, STDERR_FILENO);
-		i++;
-	}
-	return (0);
 }
 
 void	parse_input(t_data *data, int argc, char **argv)
@@ -66,6 +42,7 @@ void	parse_input(t_data *data, int argc, char **argv)
 	data->out_fd = fd;
 	data->cmd_count = argc - 3;
 	init_commands(data);
+	init_pids(data);
 	i = 2;
 	while (i < argc - 1)
 	{
@@ -77,47 +54,76 @@ void	parse_input(t_data *data, int argc, char **argv)
 	}
 }
 
+void	handle_write_redirection(t_data *data, int i)
+{
+	if (i == data->cmd_count - 1)
+	{
+		if (dup2(data->out_fd, STDOUT_FILENO) == -1)
+		{
+			close_pipes(data);
+			exit_gracefully(data, 103);
+		}
+	}
+	else
+	{
+		if (dup2(data->pipes[i + 1][1], STDOUT_FILENO) == -1)
+		{
+			close_pipes(data);
+			exit_gracefully(data, 102);
+		}
+	}
+}
+
+void	handle_read_redirection(t_data *data, int i)
+{
+	if (i == 0)
+	{
+		if (data->in_fd == -1)
+		{
+			close_pipes(data);
+			exit_gracefully(data, 0);
+		}
+		if (dup2(data->in_fd, STDIN_FILENO) == -1)
+		{
+			close_pipes(data);
+			exit_gracefully(data, 110);
+		}
+	}	
+	else
+	{
+		if (dup2(data->pipes[i][0], STDIN_FILENO) == -1)
+		{
+			close_pipes(data);
+			exit_gracefully(data, 101);
+		}
+	}
+}
+
 void	run_commands(t_data *data)
 {
 	int	i;
-	int	pid;
 
 	i = -1;
 	while (++i < data->cmd_count)
 	{
-		pid = fork();
-		if (pid == -1)
+		data->pids[i] = fork();
+		if (data->pids[i] == -1)
 			exit_gracefully(data, FORK_ERR);
-		if (pid == 0)
+		if (data->pids[i] == 0)
 		{
-			close_pipes(data, i, false);
-			if (i == 0)
-				dup2(data->in_fd, STDIN_FILENO);
-			else
-			{
-				dup2(data->pipes[i][0], STDIN_FILENO);
-				close(data->pipes[i][0]);
-			}
-			if (data->in_fd != -1)
-				close(data->in_fd);
-			if (i == data->cmd_count - 1)
-				dup2(data->out_fd, STDOUT_FILENO);
-			else
-			{
-				dup2(data->pipes[i + 1][1], STDOUT_FILENO);
-				close(data->pipes[i + 1][1]);
-			}
-			close(data->out_fd);
-			if (!data->cmds[i]->path)
-				return ;
+			handle_read_redirection(data, i);
+			handle_write_redirection(data, i);
+			close_pipes(data);
+			if (!data->cmds[i]->path)	
+				exit_gracefully(data, COMMAND_ERR);
 			if (execve(data->cmds[i]->path, data->cmds[i]->args, data->envp) == -1)
 				exit_gracefully(data, EXEC_ERR);
 		}
 	}
-	close_pipes(data, 0, true);
 	i = -1;
+	close_pipes(data);
 	while (++i < data->cmd_count)
-		wait(NULL);
+		waitpid(data->pids[i], NULL, 0);
 }
 
 void	run(t_data *data)
@@ -132,15 +138,14 @@ int	main(int argc, char **argv, char **envp)
 	t_data	data;
 
 	init_data(&data, envp);
+	if (argc < 5)
+		exit_gracefully(&data, USAGE_ERR);
 	path = extract_path(envp);
 	if (!path)
 		exit_gracefully(&data, PATH_ERR);
 	data.dirs = ft_split(path, ':');
 	if (!data.dirs)
 		exit_gracefully(&data, MEMO_ERR);
-	data.exit_code = validate_input(&data, argc, argv);
-	if (data.exit_code != 0)
-		exit_gracefully(&data, data.exit_code);
 	parse_input(&data, argc, argv);
 	run(&data);
 	exit_gracefully(&data, 0);

@@ -6,7 +6,7 @@
 /*   By: jkhasiza <jkhasiza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/18 21:01:31 by jkhasiza          #+#    #+#             */
-/*   Updated: 2024/03/07 13:06:22 by jkhasiza         ###   ########.fr       */
+/*   Updated: 2024/03/07 16:55:19 by jkhasiza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,8 @@ void	exit_gracefully(t_data *data, int reason)
 {
 	if (data->dirs)
 		free_dirs(data);
+	if (data->pids)
+		free(data->pids);
 	if (data->pipes)
 		free_pipes(data);
 	if (data->cmds)
