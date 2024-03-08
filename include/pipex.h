@@ -6,12 +6,12 @@
 /*   By: jkhasiza <jkhasiza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/08 20:34:41 by jkhasiza          #+#    #+#             */
-/*   Updated: 2024/03/08 17:54:55 by jkhasiza         ###   ########.fr       */
+/*   Updated: 2024/03/08 18:33:16 by jkhasiza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef MINISHELL_H
-# define MINISHELL_H
+#ifndef PIPEX_H
+# define PIPEX_H
 
 # include <unistd.h>
 # include <stdio.h>
@@ -50,33 +50,36 @@
 
 typedef struct s_command
 {
-    char    *path;
-    char    **args;
-}   t_command;
+	char	*path;
+	char	**args;
+}	t_command;
 
 typedef struct s_data
 {
-    char        **dirs;
-    int         cmd_count;
-    t_command   **cmds;
-    int         **pipes;
-    int         *pids;
-    char        **envp;
-    int         in_fd;
-    int         out_fd;
-    int         exit_code;
-}   t_data;
+	char		**dirs;
+	int			cmd_count;
+	t_command	**cmds;
+	int			**pipes;
+	int			*pids;
+	char		**envp;
+	int			in_fd;
+	int			out_fd;
+	int			exit_code;
+}	t_data;
 
-void	    exit_gracefully(t_data *data, int reason);
-void        free_commmands(t_command **cmds);
-void        free_dirs(t_data *data);
-void        free_pipes(t_data *data);
-void        close_pipes(t_data *data);
-void	    init_commands(t_data *data);
-void        init_pids(t_data *data);
-void	    init_data(t_data *data, char **envp);
-void        init_pipes(t_data *data);
+void		exit_gracefully(t_data *data, int reason);
+void		free_commmands(t_command **cmds);
+void		free_dirs(t_data *data);
+void		free_pipes(t_data *data);
+void		close_pipes(t_data *data);
+void		init_commands(t_data *data);
+void		run_commands(t_data *data);
+void		init_pids(t_data *data);
+void		init_data(t_data *data, char **envp);
+void		init_pipes(t_data *data);
+void		handle_read_redirection(t_data *data, int i);
+void		handle_write_redirection(t_data *data, int i);
+bool		set_arg_as_path(t_data *data, t_command *command);
 t_command	*get_command(t_data *data, char *raw_command);
-
 
 #endif

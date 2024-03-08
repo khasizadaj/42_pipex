@@ -6,7 +6,7 @@
 /*   By: jkhasiza <jkhasiza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/17 22:54:51 by jkhasiza          #+#    #+#             */
-/*   Updated: 2024/03/07 16:48:18 by jkhasiza         ###   ########.fr       */
+/*   Updated: 2024/03/08 18:34:59 by jkhasiza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 void	init_data(t_data *data, char **envp)
 {
 	data->dirs = NULL;
+	data->pids = NULL;
 	data->pipes = NULL;
 	data->in_fd = -1;
 	data->out_fd = -1;
@@ -24,5 +25,3 @@ void	init_data(t_data *data, char **envp)
 	data->envp = envp;
 	return ;
 }
-
-

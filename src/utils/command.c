@@ -6,7 +6,7 @@
 /*   By: jkhasiza <jkhasiza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/18 20:50:20 by jkhasiza          #+#    #+#             */
-/*   Updated: 2024/03/08 17:54:27 by jkhasiza         ###   ########.fr       */
+/*   Updated: 2024/03/08 18:39:32 by jkhasiza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,21 +55,14 @@ static void	set_command_path(t_data *data, t_command *command)
 	int		i;
 
 	i = -1;
-	if (access(command->args[0], X_OK) == 0)
-	{
-		command->path = ft_strdup(command->args[0]);
-		if (!command->path)
-			exit_gracefully(data, MEMO_ERR);
+	if (set_arg_as_path(data, command))
 		return ;
-	}
 	while (data->dirs[++i])
 	{
 		full_path = ft_strjoin(data->dirs[i], "/");
 		if (!full_path)
 			exit_gracefully(data, MEMO_ERR);
 		temp = full_path;
-		if (!command->args)
-			exit_gracefully(data, MEMO_ERR);
 		full_path = ft_strjoin(temp, command->args[0]);
 		free(temp);
 		if (!full_path)
@@ -104,4 +97,32 @@ t_command	*get_command(t_data *data, char *raw_command)
 		return (NULL);
 	set_command_path(data, cmd);
 	return (cmd);
+}
+
+void	run_commands(t_data *data)
+{
+	int	i;
+
+	i = -1;
+	while (++i < data->cmd_count)
+	{
+		data->pids[i] = fork();
+		if (data->pids[i] == -1)
+			exit_gracefully(data, FORK_ERR);
+		if (data->pids[i] == 0)
+		{
+			handle_read_redirection(data, i);
+			handle_write_redirection(data, i);
+			close_pipes(data);
+			if (!data->cmds[i]->path)
+				exit_gracefully(data, COMMAND_ERR);
+			if (execve(data->cmds[i]->path,
+					data->cmds[i]->args, data->envp) == -1)
+				exit_gracefully(data, EXEC_ERR);
+		}
+	}
+	i = -1;
+	close_pipes(data);
+	while (++i < data->cmd_count)
+		waitpid(data->pids[i], NULL, 0);
 }

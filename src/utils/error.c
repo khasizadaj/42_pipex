@@ -6,12 +6,11 @@
 /*   By: jkhasiza <jkhasiza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/18 21:01:31 by jkhasiza          #+#    #+#             */
-/*   Updated: 2024/03/07 16:55:19 by jkhasiza         ###   ########.fr       */
+/*   Updated: 2024/03/08 18:30:34 by jkhasiza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/pipex.h"
-#include <unistd.h>
 
 static void	exit_for(int reason)
 {
