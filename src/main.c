@@ -6,7 +6,7 @@
 /*   By: jkhasiza <jkhasiza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/08 20:30:33 by jkhasiza          #+#    #+#             */
-/*   Updated: 2024/03/08 17:55:01 by jkhasiza         ###   ########.fr       */
+/*   Updated: 2024/03/08 18:02:19 by jkhasiza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,28 +24,6 @@ char	*extract_path(char **envp)
 		i++;
 	}
 	return (NULL);
-}
-
-/*
-	Function validates the inputs provided by the user. Like bash,
-	it only informs the user about issues.
-	
-	Having errors doesn't stop the program from running except
-	provided argument count is less than 4 (i.e. 5 with program name).
-*/
-void	validate_input(t_data *data)
-{
-	int	i;
-
-
-	i = -1;
-	while (++i < data->cmd_count)
-	{
-		if (!data->cmds[i]->path)
-			ft_putstr_fd(COMMAND_ERR_MSG, STDERR_FILENO);
-		else if (access(data->cmds[i]->path, X_OK) == -1)
-			ft_putstr_fd(COMMAND_ERR_MSG, STDERR_FILENO);
-	}
 }
 
 void	parse_input(t_data *data, int argc, char **argv)
@@ -136,8 +114,8 @@ void	run_commands(t_data *data)
 			handle_read_redirection(data, i);
 			handle_write_redirection(data, i);
 			close_pipes(data);
-			if (!data->cmds[i]->path)
-				exit_gracefully(data, 192);
+			if (!data->cmds[i]->path)	
+				exit_gracefully(data, COMMAND_ERR);
 			if (execve(data->cmds[i]->path, data->cmds[i]->args, data->envp) == -1)
 				exit_gracefully(data, EXEC_ERR);
 		}
@@ -169,7 +147,6 @@ int	main(int argc, char **argv, char **envp)
 	if (!data.dirs)
 		exit_gracefully(&data, MEMO_ERR);
 	parse_input(&data, argc, argv);
-	validate_input(&data);
 	run(&data);
 	exit_gracefully(&data, 0);
 }
