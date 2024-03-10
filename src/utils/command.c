@@ -6,7 +6,7 @@
 /*   By: jkhasiza <jkhasiza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/18 20:50:20 by jkhasiza          #+#    #+#             */
-/*   Updated: 2024/03/08 18:39:32 by jkhasiza         ###   ########.fr       */
+/*   Updated: 2024/03/10 15:36:40 by jkhasiza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,8 @@ static void	set_command_path(t_data *data, t_command *command)
 	int		i;
 
 	i = -1;
-	if (set_arg_as_path(data, command))
+	set_arg_as_path(data, command);
+	if (chr_in('/', command->args[0]) == 1)
 		return ;
 	while (data->dirs[++i])
 	{
