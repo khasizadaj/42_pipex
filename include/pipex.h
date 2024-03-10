@@ -6,7 +6,7 @@
 /*   By: jkhasiza <jkhasiza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/08 20:34:41 by jkhasiza          #+#    #+#             */
-/*   Updated: 2024/03/10 15:31:02 by jkhasiza         ###   ########.fr       */
+/*   Updated: 2024/03/10 16:13:13 by jkhasiza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@
 # define USAGE_ERR_MSG "Usage: ./pipex file1 cmd1 cmd2 file2\n"
 
 # define ACCESS_ERR 14
-# define ACCESS_ERR_MSG "File went on a little vacation.\n"
+# define ACCESS_ERR_MSG "File is not accesible.\n"
 
 # define COMMAND_ERR 15
 # define COMMAND_ERR_MSG "Command doesn't exist. Learn bash, pls!\n"
@@ -47,6 +47,12 @@
 
 # define FORK_ERR 17
 # define FORK_ERR_MSG "Fork couldn't be created\n"
+
+# define DUP2_IN_ERR 18
+# define DUP2_IN_ERR_MSG "dup2 failed for read end.\n"
+
+# define DUP2_OUT_ERR 19
+# define DUP2_OUT_ERR_MSG "dup2 failed for write end.\n"
 
 typedef struct s_command
 {
@@ -67,13 +73,14 @@ typedef struct s_data
 	int			exit_code;
 }	t_data;
 
-void		exit_gracefully(t_data *data, int reason);
+void		exit_gracefully(t_data *data, int reason, bool with_message);
 void		free_commmands(t_command **cmds);
 void		free_dirs(t_data *data);
 void		free_pipes(t_data *data);
 void		close_pipes(t_data *data);
 void		init_commands(t_data *data);
 void		run_commands(t_data *data);
+void		wait_for_processes(t_data *data);
 void		init_pids(t_data *data);
 void		init_data(t_data *data, char **envp);
 void		init_pipes(t_data *data);

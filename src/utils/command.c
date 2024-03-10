@@ -6,7 +6,7 @@
 /*   By: jkhasiza <jkhasiza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/18 20:50:20 by jkhasiza          #+#    #+#             */
-/*   Updated: 2024/03/10 15:36:40 by jkhasiza         ###   ########.fr       */
+/*   Updated: 2024/03/10 16:13:44 by jkhasiza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ void	init_commands(t_data *data)
 
 	data->cmds = malloc(sizeof(t_command) * (data->cmd_count + 1));
 	if (!data->cmds)
-		exit_gracefully(data, MEMO_ERR);
+		exit_gracefully(data, MEMO_ERR, true);
 	i = -1;
 	while (++i <= data->cmd_count)
 		data->cmds[i] = NULL;
@@ -37,7 +37,7 @@ void	init_pids(t_data *data)
 
 	data->pids = malloc(sizeof(int) * (data->cmd_count + 1));
 	if (!data->pids)
-		exit_gracefully(data, MEMO_ERR);
+		exit_gracefully(data, MEMO_ERR, true);
 	i = -1;
 	while (++i <= data->cmd_count)
 		data->pids[i] = 0;
@@ -62,12 +62,12 @@ static void	set_command_path(t_data *data, t_command *command)
 	{
 		full_path = ft_strjoin(data->dirs[i], "/");
 		if (!full_path)
-			exit_gracefully(data, MEMO_ERR);
+			exit_gracefully(data, MEMO_ERR, true);
 		temp = full_path;
 		full_path = ft_strjoin(temp, command->args[0]);
 		free(temp);
 		if (!full_path)
-			exit_gracefully(data, MEMO_ERR);
+			exit_gracefully(data, MEMO_ERR, true);
 		if (access(full_path, X_OK) == 0)
 		{
 			command->path = full_path;
@@ -109,21 +109,20 @@ void	run_commands(t_data *data)
 	{
 		data->pids[i] = fork();
 		if (data->pids[i] == -1)
-			exit_gracefully(data, FORK_ERR);
+			exit_gracefully(data, FORK_ERR, true);
 		if (data->pids[i] == 0)
 		{
 			handle_read_redirection(data, i);
 			handle_write_redirection(data, i);
 			close_pipes(data);
 			if (!data->cmds[i]->path)
-				exit_gracefully(data, COMMAND_ERR);
+				exit_gracefully(data, COMMAND_ERR, true);
 			if (execve(data->cmds[i]->path,
 					data->cmds[i]->args, data->envp) == -1)
-				exit_gracefully(data, EXEC_ERR);
+				exit_gracefully(data, EXEC_ERR, true);
 		}
 	}
 	i = -1;
 	close_pipes(data);
-	while (++i < data->cmd_count)
-		waitpid(data->pids[i], NULL, 0);
+	wait_for_processes(data);
 }

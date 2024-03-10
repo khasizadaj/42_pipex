@@ -6,7 +6,7 @@
 /*   By: jkhasiza <jkhasiza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/18 21:01:31 by jkhasiza          #+#    #+#             */
-/*   Updated: 2024/03/08 18:30:34 by jkhasiza         ###   ########.fr       */
+/*   Updated: 2024/03/10 16:11:48 by jkhasiza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,12 @@ static void	exit_for(int reason)
 {
 	if (reason == PATH_ERR)
 		ft_putstr_fd(PATH_ERR_MSG, STDERR_FILENO);
+	else if (reason == FORK_ERR)
+		ft_putstr_fd(FORK_ERR_MSG, STDERR_FILENO);
+	else if (reason == DUP2_IN_ERR)
+		ft_putstr_fd(DUP2_IN_ERR_MSG, STDERR_FILENO);
+	else if (reason == DUP2_OUT_ERR)
+		ft_putstr_fd(DUP2_OUT_ERR_MSG, STDERR_FILENO);
 	else if (reason == EXEC_ERR)
 		ft_putstr_fd(EXEC_ERR_MSG, STDERR_FILENO);
 	else if (reason == MEMO_ERR)
@@ -33,7 +39,7 @@ static void	exit_for(int reason)
 	exit(reason);
 }
 
-void	exit_gracefully(t_data *data, int reason)
+void	exit_gracefully(t_data *data, int reason, bool with_message)
 {
 	if (data->dirs)
 		free_dirs(data);
@@ -43,5 +49,8 @@ void	exit_gracefully(t_data *data, int reason)
 		free_pipes(data);
 	if (data->cmds)
 		free_commmands(data->cmds);
-	exit_for(reason);
+	if (with_message)
+		exit_for(reason);
+	else
+		exit(reason);
 }
