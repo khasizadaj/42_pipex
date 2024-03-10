@@ -6,7 +6,7 @@
 /*   By: jkhasiza <jkhasiza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/08 20:30:33 by jkhasiza          #+#    #+#             */
-/*   Updated: 2024/03/08 18:14:51 by jkhasiza         ###   ########.fr       */
+/*   Updated: 2024/03/10 15:56:52 by jkhasiza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ void	parse_input(t_data *data, int argc, char **argv)
 	data->in_fd = fd;
 	fd = open(argv[argc - 1], O_WRONLY | O_CREAT | O_TRUNC, 0777);
 	if (fd == -1)
-		exit_gracefully(data, ACCESS_ERR);
+		exit_gracefully(data, ACCESS_ERR, true);
 	data->out_fd = fd;
 	data->cmd_count = argc - 3;
 	init_commands(data);
@@ -48,7 +48,7 @@ void	parse_input(t_data *data, int argc, char **argv)
 	{
 		cmd = get_command(data, argv[i]);
 		if (!cmd)
-			exit_gracefully(data, MEMO_ERR);
+			exit_gracefully(data, MEMO_ERR, true);
 		data->cmds[i - 2] = cmd;
 		i++;
 	}
@@ -67,14 +67,14 @@ int	main(int argc, char **argv, char **envp)
 
 	init_data(&data, envp);
 	if (argc < 5)
-		exit_gracefully(&data, USAGE_ERR);
+		exit_gracefully(&data, USAGE_ERR, true);
 	path = extract_path(envp);
 	if (!path)
-		exit_gracefully(&data, PATH_ERR);
+		exit_gracefully(&data, PATH_ERR, true);
 	data.dirs = ft_split(path, ':');
 	if (!data.dirs)
-		exit_gracefully(&data, MEMO_ERR);
+		exit_gracefully(&data, MEMO_ERR, true);
 	parse_input(&data, argc, argv);
 	run(&data);
-	exit_gracefully(&data, 0);
+	exit_gracefully(&data, data.exit_code, false);
 }
