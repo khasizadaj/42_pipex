@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   main_bonus.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jkhasiza <jkhasiza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/08 20:30:33 by jkhasiza          #+#    #+#             */
-/*   Updated: 2024/03/12 18:19:03 by jkhasiza         ###   ########.fr       */
+/*   Updated: 2024/03/12 21:35:00 by jkhasiza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ void	parse_input(t_data *data, int argc, char **argv)
 	data->in_fd = fd;
 	fd = open(argv[argc - 1], O_WRONLY | O_CREAT | O_TRUNC, 0777);
 	if (fd == -1)
-		exit_gracefully(data, ACCESS_ERR, true);
+		exit_gracefully(data, ACCESS_ERR, ACCESS_ERR_MSG, true);
 	data->out_fd = fd;
 	data->cmd_count = argc - 3;
 	init_commands(data);
@@ -48,7 +48,7 @@ void	parse_input(t_data *data, int argc, char **argv)
 	{
 		cmd = get_command(data, argv[i]);
 		if (!cmd)
-			exit_gracefully(data, MEMO_ERR, true);
+			exit_gracefully(data, MEMO_ERR, MEMO_ERR_MSG, true);
 		data->cmds[i - 2] = cmd;
 		i++;
 	}
@@ -67,14 +67,14 @@ int	main(int argc, char **argv, char **envp)
 
 	init_data(&data, envp);
 	if (argc < 5)
-		exit_gracefully(&data, USAGE_ERR, true);
+		exit_gracefully(&data, USAGE_ERR, USAGE_ERR_MSG, true);
 	path = extract_path(envp);
 	if (!path)
-		exit_gracefully(&data, PATH_ERR, true);
+		exit_gracefully(&data, PATH_ERR, PATH_ERR_MSG, true);
 	data.dirs = ft_split(path, ':');
 	if (!data.dirs)
-		exit_gracefully(&data, MEMO_ERR, true);
+		exit_gracefully(&data, MEMO_ERR, MEMO_ERR_MSG, true);
 	parse_input(&data, argc, argv);
 	run(&data);
-	exit_gracefully(&data, data.exit_code, false);
+	exit_gracefully(&data, data.exit_code, "", false);
 }
