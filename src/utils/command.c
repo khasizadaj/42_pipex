@@ -6,7 +6,7 @@
 /*   By: jkhasiza <jkhasiza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/18 20:50:20 by jkhasiza          #+#    #+#             */
-/*   Updated: 2024/03/12 18:36:38 by jkhasiza         ###   ########.fr       */
+/*   Updated: 2024/03/12 19:18:20 by jkhasiza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ void	init_commands(t_data *data)
 {
 	int	i;
 
-	data->cmds = malloc(sizeof(t_command) * (data->cmd_count + 1));
+	data->cmds = malloc(sizeof(t_command *) * (data->cmd_count + 1));
 	if (!data->cmds)
 		exit_gracefully(data, MEMO_ERR, true);
 	i = -1;
@@ -95,7 +95,7 @@ t_command	*get_command(t_data *data, char *raw_command)
 	cmd->path = NULL;
 	cmd->args = ft_split(raw_command, ' ');
 	if (!cmd->args)
-		return (NULL);
+		return (free(cmd), NULL);
 	set_command_path(data, cmd);
 	return (cmd);
 }
@@ -122,7 +122,6 @@ void	run_commands(t_data *data)
 				exit_gracefully(data, EXEC_ERR, true);
 		}
 	}
-	i = -1;
 	close_pipes(data);
 	wait_for_processes(data);
 }
