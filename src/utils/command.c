@@ -6,7 +6,7 @@
 /*   By: jkhasiza <jkhasiza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/18 20:50:20 by jkhasiza          #+#    #+#             */
-/*   Updated: 2024/03/10 16:13:44 by jkhasiza         ###   ########.fr       */
+/*   Updated: 2024/03/12 18:36:38 by jkhasiza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,9 +55,6 @@ static void	set_command_path(t_data *data, t_command *command)
 	int		i;
 
 	i = -1;
-	set_arg_as_path(data, command);
-	if (chr_in('/', command->args[0]) == 1)
-		return ;
 	while (data->dirs[++i])
 	{
 		full_path = ft_strjoin(data->dirs[i], "/");
@@ -75,6 +72,9 @@ static void	set_command_path(t_data *data, t_command *command)
 		}
 		free(full_path);
 	}
+	set_arg_as_path(data, command);
+	if (chr_in('/', command->args[0]) == 1)
+		return ;
 }
 
 /*
