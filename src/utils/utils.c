@@ -6,7 +6,7 @@
 /*   By: jkhasiza <jkhasiza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/08 18:14:41 by jkhasiza          #+#    #+#             */
-/*   Updated: 2024/03/10 16:13:25 by jkhasiza         ###   ########.fr       */
+/*   Updated: 2024/03/12 21:35:28 by jkhasiza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ void	handle_write_redirection(t_data *data, int i)
 		if (dup2(data->out_fd, STDOUT_FILENO) == -1)
 		{
 			close_pipes(data);
-			exit_gracefully(data, DUP2_OUT_ERR, true);
+			exit_gracefully(data, DUP2_OUT_ERR, DUP2_OUT_ERR_MSG, true);
 		}
 	}
 	else
@@ -27,7 +27,7 @@ void	handle_write_redirection(t_data *data, int i)
 		if (dup2(data->pipes[i + 1][1], STDOUT_FILENO) == -1)
 		{
 			close_pipes(data);
-			exit_gracefully(data, DUP2_OUT_ERR, true);
+			exit_gracefully(data, DUP2_OUT_ERR, DUP2_OUT_ERR_MSG, true);
 		}
 	}
 }
@@ -39,12 +39,12 @@ void	handle_read_redirection(t_data *data, int i)
 		if (data->in_fd == -1)
 		{
 			close_pipes(data);
-			exit_gracefully(data, ACCESS_ERR, false);
+			exit_gracefully(data, ACCESS_ERR, ACCESS_ERR_MSG, false);
 		}
 		if (dup2(data->in_fd, STDIN_FILENO) == -1)
 		{
 			close_pipes(data);
-			exit_gracefully(data, DUP2_IN_ERR, true);
+			exit_gracefully(data, DUP2_IN_ERR, DUP2_IN_ERR_MSG, true);
 		}
 	}
 	else
@@ -52,7 +52,7 @@ void	handle_read_redirection(t_data *data, int i)
 		if (dup2(data->pipes[i][0], STDIN_FILENO) == -1)
 		{
 			close_pipes(data);
-			exit_gracefully(data, DUP2_IN_ERR, true);
+			exit_gracefully(data, DUP2_IN_ERR, DUP2_IN_ERR_MSG, true);
 		}
 	}
 }
@@ -68,7 +68,7 @@ void	set_arg_as_path(t_data *data, t_command *command)
 	{
 		command->path = ft_strdup(command->args[0]);
 		if (!command->path)
-			exit_gracefully(data, MEMO_ERR, true);
+			exit_gracefully(data, MEMO_ERR, MEMO_ERR_MSG, true);
 	}
 }
 

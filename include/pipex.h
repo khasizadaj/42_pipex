@@ -6,7 +6,7 @@
 /*   By: jkhasiza <jkhasiza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/08 20:34:41 by jkhasiza          #+#    #+#             */
-/*   Updated: 2024/03/10 16:13:13 by jkhasiza         ###   ########.fr       */
+/*   Updated: 2024/03/12 21:36:44 by jkhasiza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,37 +21,37 @@
 # include <sys/wait.h>
 # include "../src/libft/libft.h"
 
-# define EXEC_ERR 6
+# define EXEC_ERR 1
 # define EXEC_ERR_MSG "Execution failed\n"
 
-# define PATH_ERR 11
+# define PATH_ERR 1
 # define PATH_ERR_MSG "PATH doesn't exist\n"
 
-# define MEMO_ERR 12
+# define MEMO_ERR 1
 # define MEMO_ERR_MSG "Memory allocation failed\n"
 
-# define USAGE_ERR 13
+# define USAGE_ERR 1
 # define USAGE_ERR_MSG "Usage: ./pipex file1 cmd1 cmd2 file2\n"
 
-# define ACCESS_ERR 14
+# define ACCESS_ERR 1
 # define ACCESS_ERR_MSG "File is not accesible.\n"
 
-# define COMMAND_ERR 15
+# define COMMAND_ERR 127
 # define COMMAND_ERR_MSG "Command doesn't exist. Learn bash, pls!\n"
 
-# define UNKNOWN_ERR 10
+# define UNKNOWN_ERR 1
 # define UNKNOWN_ERR_MSG "Unknown error\n"
 
-# define PIPE_ERR 16
+# define PIPE_ERR 1
 # define PIPE_ERR_MSG "Pipe couldn't be created\n"
 
-# define FORK_ERR 17
+# define FORK_ERR 1
 # define FORK_ERR_MSG "Fork couldn't be created\n"
 
-# define DUP2_IN_ERR 18
+# define DUP2_IN_ERR 1
 # define DUP2_IN_ERR_MSG "dup2 failed for read end.\n"
 
-# define DUP2_OUT_ERR 19
+# define DUP2_OUT_ERR 1
 # define DUP2_OUT_ERR_MSG "dup2 failed for write end.\n"
 
 typedef struct s_command
@@ -73,7 +73,8 @@ typedef struct s_data
 	int			exit_code;
 }	t_data;
 
-void		exit_gracefully(t_data *data, int reason, bool with_message);
+void		exit_gracefully(t_data *data, int reason, char *msg,
+				bool with_message);
 void		free_commmands(t_command **cmds);
 void		free_dirs(t_data *data);
 void		free_pipes(t_data *data);
