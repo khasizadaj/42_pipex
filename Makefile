@@ -3,16 +3,20 @@
 ###############################################################################
 
 NAME		= pipex
+NAME_BONUS	= pipex_bonus
 CFLAGS		= -Wall -Wextra -Werror -MP -MD -g
 LIBFT_DIR	= src/libft/
 LIBFT		= ft
 
-SRCS_DIR	= src
+SRCS_DIR	= src/main
+BONUS_DIR	= src/bonus
 UTILS_DIR	= src/utils
-TEST_DIR	= tests
 
 SRCS		= \
 	${SRCS_DIR}/main.c
+
+BONUS_SRCS	= \
+	${BONUS_DIR}/main_bonus.c
 
 SRCS_UTILS	= \
 	${UTILS_DIR}/command.c \
@@ -22,16 +26,14 @@ SRCS_UTILS	= \
 	${UTILS_DIR}/pipe.c \
 	${UTILS_DIR}/utils.c
 
-# If you need another directory, add it here
-# SRCS_DIR	+= ...
-
-OBJS_DIR	= ${SRCS_DIR}/objs
+OBJS_DIR	= src/objs
 OBJS		= \
 	${SRCS:${SRCS_DIR}/%.c=${OBJS_DIR}/%.o} \
 	${SRCS_UTILS:${UTILS_DIR}/%.c=${OBJS_DIR}/%.o}
 
-# New directories should be added like this
-#	${SRCS_DIR}/%.c=${OBJS_DIR}/%.o}
+BONUS_OBJS		= \
+	${BONUS_SRCS:${BONUS_DIR}/%.c=${OBJS_DIR}/%.o} \
+	${SRCS_UTILS:${UTILS_DIR}/%.c=${OBJS_DIR}/%.o}
 
 ###############################################################################
 ######                               RULES                               ######
@@ -39,17 +41,23 @@ OBJS		= \
 
 all: ${NAME}
 
+bonus: ${NAME_BONUS}
+
 ${NAME}: ${OBJS}
-	@make -C ${LIBFT_DIR}
+	@make -C ${LIBFT_DIR} --no-print-directory
 	${CC} ${CFLAGS} -o ${NAME} ${OBJS} -L${LIBFT_DIR} -l${LIBFT}
 
+${NAME_BONUS}: ${BONUS_OBJS}
+	@make -C ${LIBFT_DIR} --no-print-directory
+	${CC} ${CFLAGS} -o ${NAME_BONUS} ${BONUS_OBJS} -L${LIBFT_DIR} -l${LIBFT}
+
 clean:
-	@make -C ${LIBFT_DIR} clean
+	@make -C ${LIBFT_DIR} clean --no-print-directory
 	@rm -rf ${OBJS_DIR}
 
 fclean: clean
-	@make -C ${LIBFT_DIR} fclean
-	@rm -f ${NAME}
+	@make -C ${LIBFT_DIR} fclean --no-print-directory
+	@rm -f ${NAME} ${NAME_BONUS}
 
 run: ${NAME}
 	./${NAME}
@@ -60,13 +68,12 @@ ${OBJS_DIR}/%.o: ${SRCS_DIR}/%.c
 	@mkdir -p $(dir $@)
 	@cc ${CFLAGS} -c $< -o $@
 
+${OBJS_DIR}/%.o: ${BONUS_DIR}/%.c
+	@mkdir -p $(dir $@)
+	@cc ${CFLAGS} -c $< -o $@
+
 ${OBJS_DIR}/%.o: ${UTILS_DIR}/%.c
 	@mkdir -p $(dir $@)
 	${CC} ${CFLAGS} -c $< -o $@
-
-# New rules for should be added like this
-# ${OBJS_DIR}/%.o: ${NEW_DIR}/%.c
-# 	@mkdir -p $(dir $@)
-# 	${CC} ${CFLAGS} -c $< -o $@
 
 .PHONY: all clean fclean re
