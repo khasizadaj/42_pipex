@@ -6,7 +6,7 @@
 /*   By: jkhasiza <jkhasiza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/18 20:50:20 by jkhasiza          #+#    #+#             */
-/*   Updated: 2024/03/12 21:33:03 by jkhasiza         ###   ########.fr       */
+/*   Updated: 2024/03/12 21:40:39 by jkhasiza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,6 +88,8 @@ t_command	*get_command(t_data *data, char *raw_command)
 {
 	t_command	*cmd;
 
+	if (ft_strlen(raw_command) == 0)
+		return (NULL);
 	cmd = malloc(sizeof(t_command));
 	if (!cmd)
 		return (NULL);
