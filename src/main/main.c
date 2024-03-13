@@ -6,7 +6,7 @@
 /*   By: jkhasiza <jkhasiza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/08 20:30:33 by jkhasiza          #+#    #+#             */
-/*   Updated: 2024/03/12 21:35:11 by jkhasiza         ###   ########.fr       */
+/*   Updated: 2024/03/13 01:23:46 by jkhasiza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,11 +32,11 @@ void	parse_input(t_data *data, int argc, char **argv)
 	int			i;
 	t_command	*cmd;
 
-	fd = open(argv[1], O_RDONLY, 0777);
+	fd = open(argv[1], O_RDONLY, 0644);
 	if (fd == -1)
 		ft_putstr_fd(ACCESS_ERR_MSG, STDERR_FILENO);
 	data->in_fd = fd;
-	fd = open(argv[argc - 1], O_WRONLY | O_CREAT | O_TRUNC, 0777);
+	fd = open(argv[argc - 1], O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	if (fd == -1)
 		exit_gracefully(data, ACCESS_ERR, ACCESS_ERR_MSG, true);
 	data->out_fd = fd;
