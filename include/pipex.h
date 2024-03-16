@@ -6,7 +6,7 @@
 /*   By: jkhasiza <jkhasiza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/08 20:34:41 by jkhasiza          #+#    #+#             */
-/*   Updated: 2024/03/16 16:09:56 by jkhasiza         ###   ########.fr       */
+/*   Updated: 2024/03/16 19:43:38 by jkhasiza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,9 @@
 
 # define USAGE_ERR 1
 # define USAGE_ERR_MSG "Usage: ./pipex file1 cmd1 cmd2 file2\n"
+
+# define FILE_ERR_NO_FILE 1
+# define FILE_ERR_NO_PERM 2
 
 # define ACCESS_ERR 1
 # define ACCESS_ERR_MSG "File is not accesible.\n"
@@ -76,6 +79,7 @@ typedef struct s_data
 void		parse_input(t_data *data, int argc, char **argv);
 void		exit_gracefully(t_data *data, int reason, char *msg,
 				bool with_message);
+void		print_file_error(int reason, char *filename);
 void		free_commmands(t_command **cmds);
 void		free_dirs(t_data *data);
 void		free_pipes(t_data *data);

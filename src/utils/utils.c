@@ -6,7 +6,7 @@
 /*   By: jkhasiza <jkhasiza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/08 18:14:41 by jkhasiza          #+#    #+#             */
-/*   Updated: 2024/03/16 18:04:22 by jkhasiza         ###   ########.fr       */
+/*   Updated: 2024/03/16 19:44:54 by jkhasiza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,18 +93,17 @@ void	wait_for_processes(t_data *data)
 
 void	parse_input(t_data *data, int argc, char **argv)
 {
-	int			fd;
 	int			i;
 	t_command	*cmd;
 
-	fd = open(argv[1], O_RDONLY, 0644);
-	if (fd == -1)
-		ft_putstr_fd(ACCESS_ERR_MSG, STDERR_FILENO);
-	data->in_fd = fd;
-	fd = open(argv[argc - 1], O_WRONLY | O_CREAT | O_TRUNC, 0644);
-	if (fd == -1)
-		ft_putstr_fd(ACCESS_ERR_MSG, STDERR_FILENO);
-	data->out_fd = fd;
+	if (access(argv[1], F_OK) == -1)
+		print_file_error(FILE_ERR_NO_FILE, argv[1]);
+	else if (access(argv[1], R_OK) == -1)
+		print_file_error(FILE_ERR_NO_PERM, argv[1]);
+	data->in_fd = open(argv[1], O_RDONLY, 0644);
+	if (access(argv[argc -1], F_OK) == 0 && access(argv[argc -1], W_OK) == -1)
+		print_file_error(FILE_ERR_NO_PERM, argv[argc -1]);
+	data->out_fd  = open(argv[argc - 1], O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	data->cmd_count = argc - 3;
 	init_commands(data);
 	init_pids(data);
