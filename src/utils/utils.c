@@ -6,7 +6,7 @@
 /*   By: jkhasiza <jkhasiza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/08 18:14:41 by jkhasiza          #+#    #+#             */
-/*   Updated: 2024/03/12 21:35:28 by jkhasiza         ###   ########.fr       */
+/*   Updated: 2024/03/16 16:15:03 by jkhasiza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,11 @@ void	handle_write_redirection(t_data *data, int i)
 {
 	if (i == data->cmd_count - 1)
 	{
+		if (data->out_fd == -1)
+		{
+			close_pipes(data);
+			exit_gracefully(data, ACCESS_ERR, ACCESS_ERR_MSG, false);
+		}
 		if (dup2(data->out_fd, STDOUT_FILENO) == -1)
 		{
 			close_pipes(data);
@@ -83,5 +88,33 @@ void	wait_for_processes(t_data *data)
 		waitpid(data->pids[i], &status, 0);
 		if (WIFEXITED(status))
 			data->exit_code = WEXITSTATUS(status);
+	}
+}
+
+void	parse_input(t_data *data, int argc, char **argv)
+{
+	int			fd;
+	int			i;
+	t_command	*cmd;
+
+	fd = open(argv[1], O_RDONLY, 0644);
+	if (fd == -1)
+		ft_putstr_fd(ACCESS_ERR_MSG, STDERR_FILENO);
+	data->in_fd = fd;
+	fd = open(argv[argc - 1], O_WRONLY | O_CREAT | O_TRUNC, 0644);
+	if (fd == -1)
+		ft_putstr_fd(ACCESS_ERR_MSG, STDERR_FILENO);
+	data->out_fd = fd;
+	data->cmd_count = argc - 3;
+	init_commands(data);
+	init_pids(data);
+	i = 2;
+	while (i < argc - 1)
+	{
+		cmd = get_command(data, argv[i]);
+		if (!cmd)
+			exit_gracefully(data, MEMO_ERR, MEMO_ERR_MSG, true);
+		data->cmds[i - 2] = cmd;
+		i++;
 	}
 }

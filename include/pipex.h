@@ -6,7 +6,7 @@
 /*   By: jkhasiza <jkhasiza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/08 20:34:41 by jkhasiza          #+#    #+#             */
-/*   Updated: 2024/03/12 21:36:44 by jkhasiza         ###   ########.fr       */
+/*   Updated: 2024/03/16 16:09:56 by jkhasiza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,6 +73,7 @@ typedef struct s_data
 	int			exit_code;
 }	t_data;
 
+void		parse_input(t_data *data, int argc, char **argv);
 void		exit_gracefully(t_data *data, int reason, char *msg,
 				bool with_message);
 void		free_commmands(t_command **cmds);
