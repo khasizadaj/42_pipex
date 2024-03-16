@@ -6,7 +6,7 @@
 /*   By: jkhasiza <jkhasiza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/08 18:14:41 by jkhasiza          #+#    #+#             */
-/*   Updated: 2024/03/16 19:44:54 by jkhasiza         ###   ########.fr       */
+/*   Updated: 2024/03/16 19:50:19 by jkhasiza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,7 +103,7 @@ void	parse_input(t_data *data, int argc, char **argv)
 	data->in_fd = open(argv[1], O_RDONLY, 0644);
 	if (access(argv[argc -1], F_OK) == 0 && access(argv[argc -1], W_OK) == -1)
 		print_file_error(FILE_ERR_NO_PERM, argv[argc -1]);
-	data->out_fd  = open(argv[argc - 1], O_WRONLY | O_CREAT | O_TRUNC, 0644);
+	data->out_fd = open(argv[argc - 1], O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	data->cmd_count = argc - 3;
 	init_commands(data);
 	init_pids(data);
