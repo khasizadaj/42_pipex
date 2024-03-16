@@ -6,7 +6,7 @@
 /*   By: jkhasiza <jkhasiza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/18 21:13:20 by jkhasiza          #+#    #+#             */
-/*   Updated: 2024/03/16 18:12:13 by jkhasiza         ###   ########.fr       */
+/*   Updated: 2024/03/16 19:06:40 by jkhasiza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,6 @@ void	init_pipes(t_data *data)
 		if (!data->pipes[i])
 			exit_gracefully(data, MEMO_ERR, MEMO_ERR_MSG, true);
 		if (pipe(data->pipes[i]) == -1)
-			exit_gracefully(data, MEMO_ERR, MEMO_ERR_MSG, true);
+			exit_gracefully(data, PIPE_ERR, PIPE_ERR_MSG, true);
 	}
 }
