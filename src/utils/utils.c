@@ -6,7 +6,7 @@
 /*   By: jkhasiza <jkhasiza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/08 18:14:41 by jkhasiza          #+#    #+#             */
-/*   Updated: 2024/03/16 16:15:03 by jkhasiza         ###   ########.fr       */
+/*   Updated: 2024/03/16 18:04:22 by jkhasiza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ void	handle_write_redirection(t_data *data, int i)
 	}
 	else
 	{
-		if (dup2(data->pipes[i + 1][1], STDOUT_FILENO) == -1)
+		if (dup2(data->pipes[i][1], STDOUT_FILENO) == -1)
 		{
 			close_pipes(data);
 			exit_gracefully(data, DUP2_OUT_ERR, DUP2_OUT_ERR_MSG, true);
@@ -54,7 +54,7 @@ void	handle_read_redirection(t_data *data, int i)
 	}
 	else
 	{
-		if (dup2(data->pipes[i][0], STDIN_FILENO) == -1)
+		if (dup2(data->pipes[i - 1][0], STDIN_FILENO) == -1)
 		{
 			close_pipes(data);
 			exit_gracefully(data, DUP2_IN_ERR, DUP2_IN_ERR_MSG, true);

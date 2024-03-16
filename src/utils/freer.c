@@ -6,7 +6,7 @@
 /*   By: jkhasiza <jkhasiza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/18 15:02:12 by jkhasiza          #+#    #+#             */
-/*   Updated: 2024/03/08 18:16:16 by jkhasiza         ###   ########.fr       */
+/*   Updated: 2024/03/16 18:06:53 by jkhasiza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ void	free_pipes(t_data *data)
 	int	i;
 
 	i = 0;
-	while (i < data->cmd_count + 1 && data->pipes[i])
+	while (i < data->cmd_count - 1 && data->pipes[i])
 	{
 		free(data->pipes[i]);
 		i++;
@@ -65,7 +65,7 @@ void	close_pipes(t_data *data)
 	int	j;
 
 	j = -1;
-	while (++j < data->cmd_count)
+	while (++j < data->cmd_count - 1)
 	{
 		close(data->pipes[j][0]);
 		close(data->pipes[j][1]);

@@ -6,7 +6,7 @@
 /*   By: jkhasiza <jkhasiza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/18 21:13:20 by jkhasiza          #+#    #+#             */
-/*   Updated: 2024/03/12 21:33:30 by jkhasiza         ###   ########.fr       */
+/*   Updated: 2024/03/16 18:12:13 by jkhasiza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,10 +21,10 @@ void	init_pipes(t_data *data)
 	int	i;
 
 	i = -1;
-	data->pipes = ft_calloc(data->cmd_count + 1, sizeof(int *));
+	data->pipes = ft_calloc(data->cmd_count - 1, sizeof(int *));
 	if (!data->pipes)
 		exit_gracefully(data, MEMO_ERR, MEMO_ERR_MSG, true);
-	while (++i < data->cmd_count)
+	while (++i < data->cmd_count - 1)
 	{
 		data->pipes[i] = ft_calloc(2, sizeof(int));
 		if (!data->pipes[i])
