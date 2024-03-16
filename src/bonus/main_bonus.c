@@ -6,7 +6,7 @@
 /*   By: jkhasiza <jkhasiza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/08 20:30:33 by jkhasiza          #+#    #+#             */
-/*   Updated: 2024/03/13 01:24:06 by jkhasiza         ###   ########.fr       */
+/*   Updated: 2024/03/16 16:10:09 by jkhasiza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,34 +24,6 @@ char	*extract_path(char **envp)
 		i++;
 	}
 	return (NULL);
-}
-
-void	parse_input(t_data *data, int argc, char **argv)
-{
-	int			fd;
-	int			i;
-	t_command	*cmd;
-
-	fd = open(argv[1], O_RDONLY, 0644);
-	if (fd == -1)
-		ft_putstr_fd(ACCESS_ERR_MSG, STDERR_FILENO);
-	data->in_fd = fd;
-	fd = open(argv[argc - 1], O_WRONLY | O_CREAT | O_TRUNC, 0644);
-	if (fd == -1)
-		exit_gracefully(data, ACCESS_ERR, ACCESS_ERR_MSG, true);
-	data->out_fd = fd;
-	data->cmd_count = argc - 3;
-	init_commands(data);
-	init_pids(data);
-	i = 2;
-	while (i < argc - 1)
-	{
-		cmd = get_command(data, argv[i]);
-		if (!cmd)
-			exit_gracefully(data, MEMO_ERR, MEMO_ERR_MSG, true);
-		data->cmds[i - 2] = cmd;
-		i++;
-	}
 }
 
 void	run(t_data *data)
