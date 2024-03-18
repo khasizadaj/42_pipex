@@ -6,7 +6,7 @@
 /*   By: jkhasiza <jkhasiza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/18 20:50:20 by jkhasiza          #+#    #+#             */
-/*   Updated: 2024/03/17 23:56:10 by jkhasiza         ###   ########.fr       */
+/*   Updated: 2024/03/18 20:43:08 by jkhasiza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,28 +102,120 @@ t_command	*get_command(t_data *data, char *raw_command)
 	return (cmd);
 }
 
+
+// void	run_commands(t_data *data)
+// {
+// 	int	i;
+
+// 	i = -1;
+// 	while (++i < data->cmd_count)
+// 	{
+// 		data->pids[i] = fork();
+// 		if (data->pids[i] == -1)
+// 			exit_gracefully(data, FORK_ERR, MEMO_ERR_MSG, true);
+// 		if (data->pids[i] == 0)
+// 		{
+// 			handle_write_redirection(data, i);
+// 			if (!data->cmds[i]->path)
+// 				exit_gracefully(data, COMMAND_ERR, COMMAND_ERR_MSG, true);
+// 			if (execve(data->cmds[i]->path,
+// 					data->cmds[i]->args, data->envp) == -1)
+// 				exit_gracefully(data, EXEC_ERR, EXEC_ERR_MSG, true);
+// 		}
+// 		else
+// 		{
+// 			handle_read_redirection(data, i);
+// 			close_pipes(data);	
+// 		}
+// 	}
+// 	wait_for_processes(data);
+// }
+
+void	run_command(t_data *data, int i)
+{
+	int	pid;
+	int	fd[2];
+
+	if (pipe(fd) == -1)
+		exit_gracefully(data, PIPE_ERR, PIPE_ERR_MSG, true);
+	pid = fork();
+	if (pid == -1)
+		exit_gracefully(data, FORK_ERR, MEMO_ERR_MSG, true);
+	if (pid == 0)
+	{
+		printf("pid: %d; i=%d\n", pid, i);
+		close(fd[0]);
+		if (i == data->cmd_count - 1)
+		{
+			printf("lastcmd: %d; i=%d\n", pid, i);
+			if (data->out_fd == -1)
+			{			
+				close(fd[1]);
+				exit_gracefully(data, ACCESS_ERR, ACCESS_ERR_MSG, false);
+			}
+			if (dup2(data->out_fd, STDOUT_FILENO) == -1)
+			{
+				close(fd[1]);
+				exit_gracefully(data, DUP2_OUT_ERR, DUP2_OUT_ERR_MSG, true);	
+			}
+		}
+		else
+		{
+			if (dup2(fd[1], STDOUT_FILENO) == -1)
+			{
+				close(fd[1]);
+				exit_gracefully(data, DUP2_OUT_ERR, DUP2_OUT_ERR_MSG, true);
+			}
+		}
+		close(fd[1]);
+		if (!data->cmds[i]->path)
+			exit_gracefully(data, COMMAND_ERR, COMMAND_ERR_MSG, true);
+		if (execve(data->cmds[i]->path,
+				data->cmds[i]->args, data->envp) == -1)
+			exit_gracefully(data, EXEC_ERR, EXEC_ERR_MSG, true);
+	}
+	else
+	{
+		printf("pid: %d; i=%d\n", pid, i);
+		close(fd[1]);
+		if (i == 0)
+		{
+			printf("in_fd: %d\n", data->in_fd);
+			if (data->in_fd == -1)
+			{
+				close(fd[0]);
+				exit_gracefully(data, ACCESS_ERR, ACCESS_ERR_MSG, false);
+			}
+			if (dup2(data->in_fd, STDIN_FILENO) == -1)
+			{
+				perror("dup2");
+				close(fd[0]);
+				exit_gracefully(data, DUP2_IN_ERR, DUP2_IN_ERR_MSG, true);
+			}
+		}
+		else 
+		{
+			if (dup2(fd[0], STDIN_FILENO) == -1)
+			{
+				close(fd[0]);
+				exit_gracefully(data, DUP2_IN_ERR, DUP2_IN_ERR_MSG, true);
+			}
+		}
+		if (data->in_fd != -1)
+			close(data->in_fd);
+		close(fd[0]);
+		printf("I am here: %d\n", data->in_fd);
+		waitpid(pid, NULL, 0);
+	}
+	
+}
+
 void	run_commands(t_data *data)
 {
 	int	i;
 
+	close_pipes(data);
 	i = -1;
 	while (++i < data->cmd_count)
-	{
-		data->pids[i] = fork();
-		if (data->pids[i] == -1)
-			exit_gracefully(data, FORK_ERR, MEMO_ERR_MSG, true);
-		if (data->pids[i] == 0)
-		{
-			handle_read_redirection(data, i);
-			handle_write_redirection(data, i);
-			close_pipes(data);
-			if (!data->cmds[i]->path)
-				exit_gracefully(data, COMMAND_ERR, COMMAND_ERR_MSG, true);
-			if (execve(data->cmds[i]->path,
-					data->cmds[i]->args, data->envp) == -1)
-				exit_gracefully(data, EXEC_ERR, EXEC_ERR_MSG, true);
-		}
-	}
-	close_pipes(data);
-	wait_for_processes(data);
+		run_command(data, i);
 }
