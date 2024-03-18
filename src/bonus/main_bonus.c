@@ -6,7 +6,7 @@
 /*   By: jkhasiza <jkhasiza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/08 20:30:33 by jkhasiza          #+#    #+#             */
-/*   Updated: 2024/03/16 16:10:09 by jkhasiza         ###   ########.fr       */
+/*   Updated: 2024/03/18 19:23:31 by jkhasiza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,11 +41,12 @@ int	main(int argc, char **argv, char **envp)
 	if (argc < 5)
 		exit_gracefully(&data, USAGE_ERR, USAGE_ERR_MSG, true);
 	path = extract_path(envp);
-	if (!path)
-		exit_gracefully(&data, PATH_ERR, PATH_ERR_MSG, true);
-	data.dirs = ft_split(path, ':');
-	if (!data.dirs)
-		exit_gracefully(&data, MEMO_ERR, MEMO_ERR_MSG, true);
+	if (path)
+	{
+		data.dirs = ft_split(path, ':');
+		if (!data.dirs)
+			exit_gracefully(&data, MEMO_ERR, MEMO_ERR_MSG, true);
+	}
 	parse_input(&data, argc, argv);
 	run(&data);
 	exit_gracefully(&data, data.exit_code, "", false);
