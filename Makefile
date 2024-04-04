@@ -4,7 +4,7 @@
 
 CC			= cc
 NAME		= pipex
-CFLAGS		= -Wall -Wextra -Werror -MP -MD -g
+CFLAGS		= -Wall -Wextra -Werror -MP -MD
 LIBFT_DIR	= src/libft/
 LIBFT		= ft
 
