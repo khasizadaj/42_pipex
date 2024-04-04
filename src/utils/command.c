@@ -6,7 +6,7 @@
 /*   By: jkhasiza <jkhasiza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/18 20:50:20 by jkhasiza          #+#    #+#             */
-/*   Updated: 2024/04/04 19:10:01 by jkhasiza         ###   ########.fr       */
+/*   Updated: 2024/04/04 20:21:11 by jkhasiza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,7 +114,7 @@ void	run_commands(t_data *data)
 		{
 			handle_read_redirection(data, i);
 			handle_write_redirection(data, i);
-			close_pipes(data);
+			close_pipes(data, true);
 			if (!data->cmds[i]->path)
 				exit_gracefully(data, COMMAND_ERR, COMMAND_ERR_MSG, true);
 			if (execve(data->cmds[i]->path,
@@ -122,6 +122,6 @@ void	run_commands(t_data *data)
 				exit_gracefully(data, EXEC_ERR, EXEC_ERR_MSG, true);
 		}
 	}
-	close_pipes(data);
+	close_pipes(data, false);
 	wait_for_processes(data);
 }

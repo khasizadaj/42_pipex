@@ -6,7 +6,7 @@
 /*   By: jkhasiza <jkhasiza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/18 21:01:31 by jkhasiza          #+#    #+#             */
-/*   Updated: 2024/03/16 19:31:24 by jkhasiza         ###   ########.fr       */
+/*   Updated: 2024/04/04 20:08:31 by jkhasiza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,10 @@ void	exit_gracefully(t_data *data, int reason, char *msg, bool with_message)
 		free_pipes(data);
 	if (data->cmds)
 		free_commmands(data->cmds);
+	if (data->in_fd != -1)
+		close(data->in_fd);
+	if (data->out_fd != -1)
+		close(data->out_fd);
 	if (with_message)
 		exit_for(reason, msg);
 	else

@@ -6,7 +6,7 @@
 /*   By: jkhasiza <jkhasiza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/18 15:02:12 by jkhasiza          #+#    #+#             */
-/*   Updated: 2024/03/16 18:06:53 by jkhasiza         ###   ########.fr       */
+/*   Updated: 2024/04/04 20:21:56 by jkhasiza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,7 @@ void	free_dirs(t_data *data)
 	free(data->dirs);
 }
 
-void	close_pipes(t_data *data)
+void	close_pipes(t_data *data, bool is_child)
 {
 	int	j;
 
@@ -70,8 +70,11 @@ void	close_pipes(t_data *data)
 		close(data->pipes[j][0]);
 		close(data->pipes[j][1]);
 	}
-	if (data->in_fd != -1)
-		close(data->in_fd);
-	if (data->out_fd != -1)
-		close(data->out_fd);
+	if (is_child)
+	{
+		if (data->in_fd != -1)
+			close(data->in_fd);
+		if (data->out_fd != -1)
+			close(data->out_fd);
+	}
 }

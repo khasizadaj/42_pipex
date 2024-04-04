@@ -35,7 +35,7 @@ all: ${NAME}
 
 ${NAME}: ${OBJS}
 	@make -C ${LIBFT_DIR} --no-print-directory
-	@{CC} ${CFLAGS} -o ${NAME} ${OBJS} -L${LIBFT_DIR} -l${LIBFT}
+	${CC} ${CFLAGS} -o ${NAME} ${OBJS} -L${LIBFT_DIR} -l${LIBFT}
 
 clean:
 	@make -C ${LIBFT_DIR} clean --no-print-directory

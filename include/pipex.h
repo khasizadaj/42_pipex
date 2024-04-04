@@ -6,7 +6,7 @@
 /*   By: jkhasiza <jkhasiza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/08 20:34:41 by jkhasiza          #+#    #+#             */
-/*   Updated: 2024/03/16 19:43:38 by jkhasiza         ###   ########.fr       */
+/*   Updated: 2024/04/04 20:19:11 by jkhasiza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,7 +83,7 @@ void		print_file_error(int reason, char *filename);
 void		free_commmands(t_command **cmds);
 void		free_dirs(t_data *data);
 void		free_pipes(t_data *data);
-void		close_pipes(t_data *data);
+void		close_pipes(t_data *data, bool is_child);
 void		init_commands(t_data *data);
 void		run_commands(t_data *data);
 void		wait_for_processes(t_data *data);
