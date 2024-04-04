@@ -6,7 +6,7 @@
 /*   By: jkhasiza <jkhasiza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/08 18:14:41 by jkhasiza          #+#    #+#             */
-/*   Updated: 2024/03/16 19:50:19 by jkhasiza         ###   ########.fr       */
+/*   Updated: 2024/04/04 20:18:36 by jkhasiza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,12 +18,12 @@ void	handle_write_redirection(t_data *data, int i)
 	{
 		if (data->out_fd == -1)
 		{
-			close_pipes(data);
+			close_pipes(data, true);
 			exit_gracefully(data, ACCESS_ERR, ACCESS_ERR_MSG, false);
 		}
 		if (dup2(data->out_fd, STDOUT_FILENO) == -1)
 		{
-			close_pipes(data);
+			close_pipes(data, true);
 			exit_gracefully(data, DUP2_OUT_ERR, DUP2_OUT_ERR_MSG, true);
 		}
 	}
@@ -31,7 +31,7 @@ void	handle_write_redirection(t_data *data, int i)
 	{
 		if (dup2(data->pipes[i][1], STDOUT_FILENO) == -1)
 		{
-			close_pipes(data);
+			close_pipes(data, true);
 			exit_gracefully(data, DUP2_OUT_ERR, DUP2_OUT_ERR_MSG, true);
 		}
 	}
@@ -43,12 +43,12 @@ void	handle_read_redirection(t_data *data, int i)
 	{
 		if (data->in_fd == -1)
 		{
-			close_pipes(data);
+			close_pipes(data, true);
 			exit_gracefully(data, ACCESS_ERR, ACCESS_ERR_MSG, false);
 		}
 		if (dup2(data->in_fd, STDIN_FILENO) == -1)
 		{
-			close_pipes(data);
+			close_pipes(data, true);
 			exit_gracefully(data, DUP2_IN_ERR, DUP2_IN_ERR_MSG, true);
 		}
 	}
@@ -56,7 +56,7 @@ void	handle_read_redirection(t_data *data, int i)
 	{
 		if (dup2(data->pipes[i - 1][0], STDIN_FILENO) == -1)
 		{
-			close_pipes(data);
+			close_pipes(data, true);
 			exit_gracefully(data, DUP2_IN_ERR, DUP2_IN_ERR_MSG, true);
 		}
 	}
