@@ -6,7 +6,7 @@
 /*   By: jkhasiza <jkhasiza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/18 20:50:20 by jkhasiza          #+#    #+#             */
-/*   Updated: 2024/03/17 23:56:10 by jkhasiza         ###   ########.fr       */
+/*   Updated: 2024/04/04 19:10:01 by jkhasiza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,8 +73,6 @@ static void	set_command_path(t_data *data, t_command *command)
 		free(full_path);
 	}
 	set_arg_as_path(data, command);
-	if (chr_in('/', command->args[0]) == 1)
-		return ;
 }
 
 /*
