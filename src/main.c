@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main_bonus.c                                       :+:      :+:    :+:   */
+/*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jkhasiza <jkhasiza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/08 20:30:33 by jkhasiza          #+#    #+#             */
-/*   Updated: 2024/03/18 19:23:31 by jkhasiza         ###   ########.fr       */
+/*   Updated: 2024/04/04 19:57:13 by jkhasiza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../include/pipex.h"
+#include "../include/pipex.h"
 
 char	*extract_path(char **envp)
 {
@@ -38,7 +38,7 @@ int	main(int argc, char **argv, char **envp)
 	t_data	data;
 
 	init_data(&data, envp);
-	if (argc < 5)
+	if (argc != 5)
 		exit_gracefully(&data, USAGE_ERR, USAGE_ERR_MSG, true);
 	path = extract_path(envp);
 	if (path)

@@ -2,21 +2,17 @@
 ######                            PROPERTIES                             ######
 ###############################################################################
 
+CC			= cc
 NAME		= pipex
-NAME_BONUS	= pipex_bonus
 CFLAGS		= -Wall -Wextra -Werror -MP -MD -g
 LIBFT_DIR	= src/libft/
 LIBFT		= ft
 
-SRCS_DIR	= src/main
-BONUS_DIR	= src/bonus
+SRCS_DIR	= src
 UTILS_DIR	= src/utils
 
 SRCS		= \
 	${SRCS_DIR}/main.c
-
-BONUS_SRCS	= \
-	${BONUS_DIR}/main_bonus.c
 
 SRCS_UTILS	= \
 	${UTILS_DIR}/command.c \
@@ -31,25 +27,15 @@ OBJS		= \
 	${SRCS:${SRCS_DIR}/%.c=${OBJS_DIR}/%.o} \
 	${SRCS_UTILS:${UTILS_DIR}/%.c=${OBJS_DIR}/%.o}
 
-BONUS_OBJS		= \
-	${BONUS_SRCS:${BONUS_DIR}/%.c=${OBJS_DIR}/%.o} \
-	${SRCS_UTILS:${UTILS_DIR}/%.c=${OBJS_DIR}/%.o}
-
 ###############################################################################
 ######                               RULES                               ######
 ###############################################################################
 
 all: ${NAME}
 
-bonus: ${NAME_BONUS}
-
 ${NAME}: ${OBJS}
 	@make -C ${LIBFT_DIR} --no-print-directory
-	${CC} ${CFLAGS} -o ${NAME} ${OBJS} -L${LIBFT_DIR} -l${LIBFT}
-
-${NAME_BONUS}: ${BONUS_OBJS}
-	@make -C ${LIBFT_DIR} --no-print-directory
-	${CC} ${CFLAGS} -o ${NAME_BONUS} ${BONUS_OBJS} -L${LIBFT_DIR} -l${LIBFT}
+	@{CC} ${CFLAGS} -o ${NAME} ${OBJS} -L${LIBFT_DIR} -l${LIBFT}
 
 clean:
 	@make -C ${LIBFT_DIR} clean --no-print-directory
@@ -57,7 +43,7 @@ clean:
 
 fclean: clean
 	@make -C ${LIBFT_DIR} fclean --no-print-directory
-	@rm -f ${NAME} ${NAME_BONUS}
+	@rm -f ${NAME}
 
 run: ${NAME}
 	./${NAME}
@@ -65,10 +51,6 @@ run: ${NAME}
 re: fclean all
 
 ${OBJS_DIR}/%.o: ${SRCS_DIR}/%.c
-	@mkdir -p $(dir $@)
-	@cc ${CFLAGS} -c $< -o $@
-
-${OBJS_DIR}/%.o: ${BONUS_DIR}/%.c
 	@mkdir -p $(dir $@)
 	@cc ${CFLAGS} -c $< -o $@
 
