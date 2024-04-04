@@ -6,7 +6,7 @@
 /*   By: jkhasiza <jkhasiza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/08 20:34:41 by jkhasiza          #+#    #+#             */
-/*   Updated: 2024/04/04 20:19:11 by jkhasiza         ###   ########.fr       */
+/*   Updated: 2024/04/04 20:42:59 by jkhasiza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@
 # define ACCESS_ERR_MSG "File is not accesible.\n"
 
 # define COMMAND_ERR 127
-# define COMMAND_ERR_MSG "Command doesn't exist. Learn bash, pls!\n"
+# define COMMAND_ERR_MSG "Command not found.\n"
 
 # define UNKNOWN_ERR 1
 # define UNKNOWN_ERR_MSG "Unknown error\n"
@@ -80,6 +80,7 @@ void		parse_input(t_data *data, int argc, char **argv);
 void		exit_gracefully(t_data *data, int reason, char *msg,
 				bool with_message);
 void		print_file_error(int reason, char *filename);
+void		print_command_error(char *cmd);
 void		free_commmands(t_command **cmds);
 void		free_dirs(t_data *data);
 void		free_pipes(t_data *data);
