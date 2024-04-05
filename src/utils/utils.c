@@ -6,7 +6,7 @@
 /*   By: jkhasiza <jkhasiza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/08 18:14:41 by jkhasiza          #+#    #+#             */
-/*   Updated: 2024/04/04 20:18:36 by jkhasiza         ###   ########.fr       */
+/*   Updated: 2024/04/05 19:40:56 by jkhasiza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,7 +111,7 @@ void	parse_input(t_data *data, int argc, char **argv)
 	while (i < argc - 1)
 	{
 		cmd = get_command(data, argv[i]);
-		if (!cmd)
+		if (!cmd && ft_strlen(argv[i]) != 0)
 			exit_gracefully(data, MEMO_ERR, MEMO_ERR_MSG, true);
 		data->cmds[i - 2] = cmd;
 		i++;

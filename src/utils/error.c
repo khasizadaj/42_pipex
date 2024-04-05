@@ -6,7 +6,7 @@
 /*   By: jkhasiza <jkhasiza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/18 21:01:31 by jkhasiza          #+#    #+#             */
-/*   Updated: 2024/04/04 20:47:35 by jkhasiza         ###   ########.fr       */
+/*   Updated: 2024/04/05 19:44:10 by jkhasiza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,11 @@
 void	print_command_error(char *cmd)
 {
 	ft_putstr_fd("pipex: ", STDERR_FILENO);
+	if (!cmd)
+	{
+		ft_putstr_fd(": command not found\n", STDERR_FILENO);
+		return ;
+	}
 	ft_putstr_fd(cmd, STDERR_FILENO);
 	ft_putstr_fd(": command not found\n", STDERR_FILENO);
 }
