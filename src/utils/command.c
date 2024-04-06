@@ -6,7 +6,7 @@
 /*   By: jkhasiza <jkhasiza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/18 20:50:20 by jkhasiza          #+#    #+#             */
-/*   Updated: 2024/04/04 20:47:28 by jkhasiza         ###   ########.fr       */
+/*   Updated: 2024/04/05 19:38:18 by jkhasiza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,8 +86,6 @@ t_command	*get_command(t_data *data, char *raw_command)
 {
 	t_command	*cmd;
 
-	if (ft_strlen(raw_command) == 0)
-		return (NULL);
 	cmd = malloc(sizeof(t_command));
 	if (!cmd)
 		return (NULL);
@@ -96,6 +94,8 @@ t_command	*get_command(t_data *data, char *raw_command)
 	cmd->args = ft_split(raw_command, ' ');
 	if (!cmd->args)
 		return (free(cmd), NULL);
+	if (cmd->args[0] == NULL)
+		return (cmd);
 	set_command_path(data, cmd);
 	return (cmd);
 }
@@ -115,7 +115,7 @@ void	run_commands(t_data *data)
 			handle_read_redirection(data, i);
 			handle_write_redirection(data, i);
 			close_pipes(data, true);
-			if (!data->cmds[i]->path)
+			if (!data->cmds[i]->path || !data->cmds[i])
 			{
 				print_command_error(data->cmds[i]->args[0]);
 				exit_gracefully(data, COMMAND_ERR, "", false);

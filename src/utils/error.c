@@ -6,7 +6,7 @@
 /*   By: jkhasiza <jkhasiza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/18 21:01:31 by jkhasiza          #+#    #+#             */
-/*   Updated: 2024/04/04 20:47:35 by jkhasiza         ###   ########.fr       */
+/*   Updated: 2024/04/05 21:26:54 by jkhasiza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,11 @@
 void	print_command_error(char *cmd)
 {
 	ft_putstr_fd("pipex: ", STDERR_FILENO);
+	if (!cmd)
+	{
+		ft_putstr_fd("command not found\n", STDERR_FILENO);
+		return ;
+	}
 	ft_putstr_fd(cmd, STDERR_FILENO);
 	ft_putstr_fd(": command not found\n", STDERR_FILENO);
 }
@@ -38,6 +43,9 @@ void	print_file_error(int reason, char *filename)
 static void	exit_for(int reason, char *msg)
 {
 	ft_putstr_fd(msg, STDERR_FILENO);
+	close(0);
+	close(1);
+	close(2);
 	exit(reason);
 }
 
@@ -57,6 +65,8 @@ void	exit_gracefully(t_data *data, int reason, char *msg, bool with_message)
 		close(data->out_fd);
 	if (with_message)
 		exit_for(reason, msg);
-	else
-		exit(reason);
+	close(0);
+	close(1);
+	close(2);
+	exit(reason);
 }
